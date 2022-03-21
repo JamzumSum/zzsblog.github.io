@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html  lang="zh_CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<meta content="C++, exiv" name="keywords" />
+
+      <title>使用Exiv2修改图像的EXIF头信息</title>
+    
+          <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../_static/theme.css " type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../_static/theme-vendors.js"></script> -->
+      <script src="../_static/theme.js" defer></script>
+      <link rel="canonical" href="www.zzsblog.top/Coding/exiv2.html" />
+    
+      <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <link rel="author" title="关于这些文档" href="../about.html" />
+  <link rel="index" title="索引" href="../genindex.html" />
+  <link rel="search" title="搜索" href="../search.html" />
+  <link rel="next" title="Python 数值中的下划线" href="python%E6%95%B0%E5%80%BC%E4%B8%AD%E7%9A%84%E4%B8%8B%E5%88%92%E7%BA%BF.html" />
+  <link rel="prev" title="TCaptcha的检测机制" href="TCaptcha%E7%9A%84%E6%A3%80%E6%B5%8B%E6%9C%BA%E5%88%B6.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../index.html" class="home-link">
+    
+      <img class="logo" src="../_static/favicon.png" alt="logo"/>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">快速搜索</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="搜索" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+    
+    <div class="sidebar-group">
+        <p class="caption">
+            <span class="caption-text"><a href="../index.html#id1">分类</a></span>
+        </p>
+        <ul class="">
+            
+            <li class="toctree-l1 ">
+                
+                <a href="index.html"
+                    class="reference internal ">   Coding</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Products/index.html"
+                    class="reference internal ">   Products</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Research/index.html"
+                    class="reference internal ">   Research</a>
+                
+
+                
+            </li>
+
+            
+        </ul>
+    </div>
+    
+    
+        <hr>
+        <div class="sidebar-group">
+            
+            
+            
+
+            <p class="caption">
+<span class="caption-text"><a class="reference internal" href="#">使用Exiv2修改图像的EXIF头信息</a><ul class="toctree-l1">
+<li><a class="reference internal" href="#exiv2">编译Exiv2</a><ul class="toctree-l1">
+<li><a class="reference internal" href="#git-clone">git clone</a></span>
+<li><a class="reference internal" href="#vs-cmakeexiv2">用VS Cmake编译Exiv2</a></span>
+</ul>
+</span>
+<li><a class="reference internal" href="#id1">使用Exiv2</a></span>
+</ul>
+</span>
+</p>
+
+        </div>
+    
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="index.html">Coding</a> &raquo;</li>
+    
+    <li>使用Exiv2修改图像的EXIF头信息</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+  <li class="prev">
+    <a href="TCaptcha%E7%9A%84%E6%A3%80%E6%B5%8B%E6%9C%BA%E5%88%B6.html"
+       title="上一章">← TCaptcha的检测机制</a>
+  </li>
+  <li class="next">
+    <a href="python%E6%95%B0%E5%80%BC%E4%B8%AD%E7%9A%84%E4%B8%8B%E5%88%92%E7%BA%BF.html"
+       title="下一章">Python 数值中的下划线 →</a>
+  </li>
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="exiv2exif">
+<h1>使用Exiv2修改图像的EXIF头信息<a class="headerlink" href="#exiv2exif" title="永久链接至标题">¶</a></h1>
+<p>写了一个下载必应美图的程序. 然而还没完, 我一直想改一下<img alt="这个东西" src="../_images/example.png" />…当时注意力就在这些什么”详细信息”啊, “属性”之类的上面, 搜啊搜啊, 也没找到什么办法…</p>
+<p>今天早晨拿两个文件做对比试验, 于是发现修改了详细信息的文件(JPEG)会多出来一个”头部”, 恍然大明白(捂脸), 一番搜索知道了这个叫<code class="docutils literal notranslate"><span class="pre">EXIF</span></code>头信息, 于是就有了下面这篇文章.</p>
+<section id="exiv2">
+<h2>编译<a class="reference external" href="https://www.exiv2.org/">Exiv2</a><a class="headerlink" href="#exiv2" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>我就不跟你们说我从哪找来这么个玩意儿的事了, 反正就是百度上搜两三个读写EXIF的库, 看看哪个好点…</p>
+</div></blockquote>
+<p>从Exiv2的官网上下载了<code class="docutils literal notranslate"><span class="pre">2017msvc64</span></code>的build包, 加载到自己的项目里就炸了. 原因很奇怪, 说是没有<code class="docutils literal notranslate"><span class="pre">std::auto_ptr</span></code>这种类型. 当年看<em>Effective C++</em> 的时候见过这个类型, 肿么就没有了捏? 网上一查知道, <code class="docutils literal notranslate"><span class="pre">auto_ptr</span></code>这种类型在C++11的时候就已经废弃了, C++17时把它移除了. C++语言标准一直都是17, 所以没有这个类型.</p>
+<p>我当时一寻思, 我是不太乐意改语言标准的, 因为我比较喜欢尝试新特性…所以就试着自己编译一下.</p>
+<section id="git-clone">
+<h3>git clone<a class="headerlink" href="#git-clone" title="永久链接至标题">¶</a></h3>
+<p>这步你们都懂罢, 拉一份最新的源码下来, 仓库在官网下载页里有, 我就不贴命令了</p>
+</section>
+<section id="vs-cmakeexiv2">
+<h3>用VS Cmake编译Exiv2<a class="headerlink" href="#vs-cmakeexiv2" title="永久链接至标题">¶</a></h3>
+<blockquote>
+<div><p>我自己是根本不会用什么cmake什么什么的, 但是我知道VS可以帮我干这个. 以前我编译过<code class="docutils literal notranslate"><span class="pre">tesseract</span></code>, 那时候只知道cmake这么个名 ~~(其实现在也一样)~~…</p>
+</div></blockquote>
+<p>在exiv2的文件夹里<code class="docutils literal notranslate"><span class="pre">shift+右键</span></code>, 点击<code class="docutils literal notranslate"><span class="pre">用Visual</span> <span class="pre">Studio打开</span></code>, 如果你没有就用正常办法…打开之后VS会自动建立cmake缓存, 可以看<code class="docutils literal notranslate"><span class="pre">输出</span></code>选项卡看看VS在做什么.</p>
+<p>然后呢, 我这是报了个错, 说是找不到<code class="docutils literal notranslate"><span class="pre">EXPAT</span></code>, 我百度了一下都是英文, 索性也不看了, 就用<code class="docutils literal notranslate"><span class="pre">vcpkg</span></code>装了一个…</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>vcpkg install expat:x64-windows
+</pre></div>
+</div>
+<p>注意我一直是x64平台编译, 所以只安装64位的, 如果你也用x86, 那还要安装x86版本的.</p>
+<p>这里给微软打个广告, <a class="reference external" href="https://docs.microsoft.com/zh-cn/cpp/build/vcpkg?view=vs-2017">vcpkg</a>虽然平时的项目里不知道为啥不好使, 但是在cmake的时候真的是帮我这种小白好大忙, 缺什么包敲个命令就好了, 不用我自己下载编译什么的.</p>
+<p>依赖问题解决, cmake缓存正常, 这时候我去src里面找源码, 发现源码里面居然一个<code class="docutils literal notranslate"><span class="pre">auto_ptr</span></code>都没有??? 可能是从git上拉下来的比较新罢, 我也不知道是怎么回事(不敢相信.jpg).</p>
+<p>下一步, 告诉编译器我要C++17标准的, 这个找了半天, 我下面写一段代码, <strong>不保证一定是对的</strong>, 我只能说我编译出来了, 而且用起来没问题.</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">include</span><span class="p">(</span><span class="s">CheckCXXCompilerFlag</span><span class="p">)</span>
+<span class="nb">CHECK_CXX_COMPILER_FLAG</span><span class="p">(</span><span class="s2">&quot;/std:c++17&quot;</span><span class="w"> </span><span class="s">_cpp_17_flag_supported</span><span class="p">)</span>
+<span class="nb">if</span> <span class="p">(</span><span class="s">_cpp_17_flag_supported</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">add_compile_options</span><span class="p">(</span><span class="s2">&quot;/std:c++17&quot;</span><span class="p">)</span>
+<span class="nb">endif</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>把上面这段代码附加到<code class="docutils literal notranslate"><span class="pre">Cmakelists.txt</span></code>末尾, 全部生成, 一切正常. 安装exiv2, 完毕.</p>
+<p>这些做完了之后不要关VS, 现在只是编译了<code class="docutils literal notranslate"><span class="pre">x64-Debug</span></code>版本的, 到配置管理器里添加一个Release版本的再来一次, 省得发布的时候再折腾.</p>
+</section>
+</section>
+<section id="id1">
+<h2>使用Exiv2<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<blockquote>
+<div><p>本来网上有几篇写这个的, 但我为什么还要写一遍呢? 因为网上的(至少是我看见的)都是读EXIF信息, 没有写入的, 为此我绕了个弯子, 所以发出来给大伙瞧瞧写入照比读取要多了什么(你能猜到罢?)</p>
+</div></blockquote>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>void BingPicker::addCopyRight(const QString&amp; filepath, const QString&amp; copyright) {
+    using namespace Exiv2;
+    //这改成unique_ptr了, 发现没?
+    Image::UniquePtr image = ImageFactory::open(filepath.toStdString());
+    assert(image.get());
+
+    image-&gt;readMetadata();
+    ExifData ed = image-&gt;exifData();
+    ed[&quot;Exif.Image.Copyright&quot;] = copyright.toStdString();
+    image-&gt;setExifData(ed);         //note this
+    image-&gt;writeMetadata();
+}
+```{code-block}
+
+额, 网上没有写入的例子, 我是在官网文档给的例子里找了一阵子把下面两句补上的. 你猜得没错, 写入是要保存的, `setExifData`和`writeMetadata`就是写入的关键, 之前只顾着找网上现成的抄, 运行了发现根本没写进去, 为此一顿好找...
+
+上面`ExifData::operator[]`返回的是一个引用, 如果没有这个键值会直接新建一个(参考map的`operator[]`), 用法很直觉, 不用担心段错误.
+
+## 结尾
+
+我把浏览器关了, 就不找之前看过啥教程了..这把写的比较详细应该...感谢StackOverflow上提问的老哥, 我在回答里翻出来了cmake切换C++语言标准的代码...感谢网上两篇exiv2读EXIF的教程
+
+照例感谢一万篇教程的作者们.
+
+源码-&gt; [GitHub](https://github.com/JamzumSum/BingPicker), 还有Release版本可供下载哦(滑稽)
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+  <li class="prev">
+    <a href="TCaptcha%E7%9A%84%E6%A3%80%E6%B5%8B%E6%9C%BA%E5%88%B6.html"
+       title="上一章">← TCaptcha的检测机制</a>
+  </li>
+  <li class="next">
+    <a href="python%E6%95%B0%E5%80%BC%E4%B8%AD%E7%9A%84%E4%B8%8B%E5%88%92%E7%BA%BF.html"
+       title="下一章">Python 数值中的下划线 →</a>
+  </li>
+</ul><div class="footer" role="contentinfo">
+      &#169; 版权所有 2021-2022, JamzumSum.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.8.0.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html  lang="zh_CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<meta content="crawler, tcaptcha, Qzone, Qzone2TG" name="keywords" />
+
+      <title>TCaptcha的检测机制</title>
+    
+          <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../_static/theme.css " type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../_static/theme-vendors.js"></script> -->
+      <script src="../_static/theme.js" defer></script>
+      <link rel="canonical" href="www.zzsblog.top/Coding/TCaptcha的检测机制.html" />
+    
+      <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <link rel="author" title="关于这些文档" href="../about.html" />
+  <link rel="index" title="索引" href="../genindex.html" />
+  <link rel="search" title="搜索" href="../search.html" />
+  <link rel="next" title="使用Exiv2修改图像的EXIF头信息" href="exiv2.html" />
+  <link rel="prev" title="Coding" href="index.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../index.html" class="home-link">
+    
+      <img class="logo" src="../_static/favicon.png" alt="logo"/>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">快速搜索</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="搜索" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+    
+    <div class="sidebar-group">
+        <p class="caption">
+            <span class="caption-text"><a href="../index.html#id1">分类</a></span>
+        </p>
+        <ul class="">
+            
+            <li class="toctree-l1 ">
+                
+                <a href="index.html"
+                    class="reference internal ">   Coding</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Products/index.html"
+                    class="reference internal ">   Products</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Research/index.html"
+                    class="reference internal ">   Research</a>
+                
+
+                
+            </li>
+
+            
+        </ul>
+    </div>
+    
+    
+        <hr>
+        <div class="sidebar-group">
+            
+            
+            
+
+            <p class="caption">
+<span class="caption-text"><a class="reference internal" href="#">TCaptcha的检测机制</a><ul class="toctree-l1">
+<li><a class="reference internal" href="#id1">前言</a></span>
+<li><a class="reference internal" href="#tdx-js">tdx.js</a></span>
+<li><a class="reference internal" href="#id2">到底检测了什么</a><ul class="toctree-l1">
+<li><a class="reference internal" href="#id3">自动化测试工具</a></span>
+<li><a class="reference internal" href="#id4">环境信息</a><ul class="toctree-l1">
+<li><a class="reference internal" href="#document-mozhidden">document.mozHidden</a></span>
+<li><a class="reference internal" href="#navigator">navigator</a></span>
+<li><a class="reference internal" href="#document-location">document &amp; location</a></span>
+<li><a class="reference internal" href="#screen-other-display-properties">screen &amp; other display properties</a></span>
+</ul>
+</span>
+<li><a class="reference internal" href="#id5">用户操作</a></span>
+</ul>
+</span>
+</ul>
+</span>
+</p>
+
+        </div>
+    
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="index.html">Coding</a> &raquo;</li>
+    
+    <li>TCaptcha的检测机制</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+  <li class="prev">
+    <a href="index.html"
+       title="上一章">← Coding</a>
+  </li>
+  <li class="next">
+    <a href="exiv2.html"
+       title="下一章">使用Exiv2修改图像的EXIF头信息 →</a>
+  </li>
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="tcaptcha">
+<h1>TCaptcha的检测机制<a class="headerlink" href="#tcaptcha" title="永久链接至标题">¶</a></h1>
+<section id="id1">
+<h2>前言<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>由于我最近在做<a class="reference external" href="https://github.com/JamzumSum/QQQR">QQQR</a>的验证码部分, 比如<img alt="这种" src="../_images/tcapcha-screenshot.png" />, 在Qzone2TG的前面一些版本里, 我都是用selenium爬取图像配合模拟拖动来做的, 当然也需要一点点的cv技术.</p>
+<p>但上面这种办法虽说理论可行, 但并非真的万无一失. 事实上, 在一开始开发的时候跑通之后, 这个办法就再也没好用过. 等到后来我用selenium抓二维码登录, 乃至<a class="reference external" href="https://github.com/JamzumSum/QQQR">QQQR</a>的第一个版本能够实现协议二维码登录的时候, 我就更不想用这种不可靠的办法了.</p>
+<p>直到<a class="reference external" href="https://github.com/JamzumSum/QQQR">QQQR</a>的开发到了<code class="docutils literal notranslate"><span class="pre">2.3.0</span></code>, 我囿于一种执着重新开始研究验证码的破解之道, 在长达十余天乃至可想见的数十天中仔细研究抓包结果和TCaptcha相关的js代码, 我才终于意识到, 使用selenium这些模拟登录的办法究竟处在一种怎样危险的境地.</p>
+<p>截至目前, 我还没有搞定<code class="docutils literal notranslate"><span class="pre">23003</span> <span class="pre">网络环境异常</span></code>的问题. 我相信唯一让我露馅的可能就在于验证码检测的时候. 尽管如此, 我仍然发现了很多tx检测浏览器特征的”小动作”.</p>
+</section>
+<section id="tdx-js">
+<h2>tdx.js<a class="headerlink" href="#tdx-js" title="永久链接至标题">¶</a></h2>
+<p>在加载TCapcha的时候, 页面会载入<code class="docutils literal notranslate"><span class="pre">tdx.js</span></code>. 这整个一个JS就是一个…虚拟机, 用我自己能明白的话来说就是一个指令集+栈+纸带(雾)的组合. 我在这上是个外行, 有的时候不明白加密何至于搞这么大的阵仗. 但不得不承认, js混淆+这种叫做<code class="docutils literal notranslate"><span class="pre">TENCENT_CHAOS_VM</span></code>的技术的确可以大大阻碍我们这些不守规矩的人(嚣张. 但可惜, tx自己搞了个什么大赛, 这种虚拟机的机制已经参赛的大佬们看透了. 我这种一开始蒙在鼓里的人, 在Github上一搜, 也就明白得差不多了.</p>
+<p>上面所说的, 指令集+栈+纸带的组合其实就完全确定了程序的逻辑. 我的目的也就是在这一团糊糊里找出tx究竟搜集了什么信息进而判断出我不对劲的 :(</p>
+<p>我首先尝试了一些手动反汇编的办法, 给每个命令加输出, 类似编译器. 但, 应该说是受限于我本身的水平, 得到的结果不够准确, 没法交给机器处理, 也就没大用. 不过从另一个角度, 这一步让我真正地深入到了指令运行的内部, 从而为后面的调试打下了基础.</p>
+</section>
+<section id="id2">
+<h2>到底检测了什么<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>背景和步骤到此为止, 没有再多说的必要了. 下面就是列出一些检测的条目, 给包括我在内的初出茅庐的人们一点警醒: selenium等等这些模拟手段没那么”真”.</p>
+<section id="id3">
+<h3>自动化测试工具<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>这一类比较泛用, 是确切的用来检测客户端是否受自动化控制的办法.</p>
+<ul class="simple">
+<li><p>window.callPhantom</p></li>
+<li><p>window._phantom</p></li>
+<li><p>window.WebPage</p></li>
+<li><p>window.fxdriver_id</p></li>
+<li><p>window.__fxdriver_unwrapped</p></li>
+<li><p>window.domAutomation</p></li>
+<li><p>window.ubot</p></li>
+<li><p>window.CasperError</p></li>
+<li><p>window.casper</p></li>
+<li><p>window.patchRequire</p></li>
+<li><p>navigator.webdriver</p></li>
+<li><p>document.$cdc_asdjflasutopfhvcZLmcfl_</p></li>
+<li><p>document.__webdriver_script_fn</p></li>
+</ul>
+<p>这些属性, 正常应该为<code class="docutils literal notranslate"><span class="pre">undefined</span></code>. 在使用某些特定工具时, 这些值会被设置, 从而可以直接断定当前访问是受自动化控制的.</p>
+<p>比如<code class="docutils literal notranslate"><span class="pre">window.navigator.webdriver</span></code>, 使用selenium时该项会设为<code class="docutils literal notranslate"><span class="pre">true</span></code>;
+比如<code class="docutils literal notranslate"><span class="pre">window.document.$cdc_asdjflasutopfhvcZLmcfl_</span></code>是chromedriver的一项特征, 正常的浏览器并没有这个键.</p>
+</section>
+<section id="id4">
+<h3>环境信息<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">tdx.js</span></code>也读取了这些信息, 分析它们可以判断当前客户端处在一个什么样的环境. 虽然没有证据. 但我相信<code class="docutils literal notranslate"><span class="pre">23003</span></code>的错误应该就在此检出(雾</p>
+<section id="document-mozhidden">
+<h4>document.mozHidden<a class="headerlink" href="#document-mozhidden" title="永久链接至标题">¶</a></h4>
+<p>似乎是检查标签页是否可见, 在chromium上为<code class="docutils literal notranslate"><span class="pre">undefined</span></code></p>
+</section>
+<section id="navigator">
+<h4>navigator<a class="headerlink" href="#navigator" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>navigator.userAgent</p></li>
+<li><p>navigator.appVersion</p></li>
+<li><p>navigator.platform</p></li>
+<li><p>navigator.cookieEnabled</p></li>
+<li><p>navigator.languages</p></li>
+<li><p>navigator.vendor</p></li>
+<li><p>navigator.appName</p></li>
+<li><p>navigator.plugins</p></li>
+<li><p>navigator.getBattery</p></li>
+</ul>
+</section>
+<section id="document-location">
+<h4>document &amp; location<a class="headerlink" href="#document-location" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>document.charset</p></li>
+<li><p>document.cookie</p></li>
+<li><p>document.referrer</p></li>
+<li><p>document.documentElement.clientWidth</p></li>
+<li><p>document.documentElement.clientHeight</p></li>
+<li><p>document.getElementById</p></li>
+<li><p>location.href</p></li>
+</ul>
+</section>
+<section id="screen-other-display-properties">
+<h4>screen &amp; other display properties<a class="headerlink" href="#screen-other-display-properties" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><p>screen.colorDepth</p></li>
+<li><p>screen.width</p></li>
+<li><p>screen.height</p></li>
+<li><p>screen.availHeight</p></li>
+<li><p>screen.pixelDepth</p></li>
+<li><p>window.innerWidth</p></li>
+<li><p>window.innerHeight</p></li>
+</ul>
+<p>上述这些属性和方法均是被检查的对象. 这些项恐怕也是selenium等工具的优势所在: 它们能和正常浏览器保持一致.</p>
+<p>当然, 对于普通的爬虫来说, 恐怕不会有这么细致的检查, 毕竟通常我们只爬HTML, 这些情形基本是遇不到的.
+但毕竟<a class="reference external" href="https://github.com/JamzumSum/QQQR">QQQR</a>是要直接和验证码作斗争, 其本质不仅仅是爬虫, 使用的工具也是<code class="docutils literal notranslate"><span class="pre">requests</span></code>+<code class="docutils literal notranslate"><span class="pre">nodejs</span></code>的基础组合, 因此这些都是要注意的对象.</p>
+</section>
+</section>
+<section id="id5">
+<h3>用户操作<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<p>人类访问是需要操作的, 而爬虫没这个必要. 因此<code class="docutils literal notranslate"><span class="pre">tdx.js</span></code>也收集用户的动作.</p>
+<ul class="simple">
+<li><p>客户端类型(手机/PC)</p></li>
+<li><p>点击等(似乎并不编码于<code class="docutils literal notranslate"><span class="pre">collect</span></code>字段, 而是<code class="docutils literal notranslate"><span class="pre">action</span></code>字段)</p></li>
+<li><p>坐标系(验证码位置, 缩放比), 以及拖动拼图时鼠标的时间-坐标关系</p></li>
+<li><p>…(是否有其他的还不清楚)</p></li>
+</ul>
+<blockquote>
+<div><p>未完待续</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+  <li class="prev">
+    <a href="index.html"
+       title="上一章">← Coding</a>
+  </li>
+  <li class="next">
+    <a href="exiv2.html"
+       title="下一章">使用Exiv2修改图像的EXIF头信息 →</a>
+  </li>
+</ul><div class="footer" role="contentinfo">
+      &#169; 版权所有 2021-2022, JamzumSum.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.8.0.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>
