@@ -1,5 +1,5 @@
 ---
-date: "2021-08-18"
+date: 2021-08-18
 author: JamzumSum
 html_meta:
     keywords: crawler, tcaptcha, Qzone, Qzone2TG
@@ -17,7 +17,7 @@ html_meta:
 
 直到[QQQR][QQQR]的开发到了`2.3.0`, 我囿于一种执着重新开始研究验证码的破解之道, 在长达十余天乃至可想见的数十天中仔细研究抓包结果和TCaptcha相关的js代码, 我才终于意识到, 使用selenium这些模拟登录的办法究竟处在一种怎样危险的境地.
 
-截至目前, 我还没有搞定`23003 网络环境异常`的问题. 我相信唯一让我露馅的可能就在于验证码检测的时候. 尽管如此, 我仍然发现了很多tx检测浏览器特征的"小动作". 
+截至目前, 我还没有搞定`23003 网络环境异常`的问题. 我相信唯一让我露馅的可能就在于验证码检测的时候. 尽管如此, 我仍然发现了很多tx检测浏览器特征的"小动作".
 
 ## tdx.js
 
@@ -49,9 +49,9 @@ html_meta:
 - document.$cdc_asdjflasutopfhvcZLmcfl_
 - document.__webdriver_script_fn
 
-这些属性, 正常应该为`undefined`. 在使用某些特定工具时, 这些值会被设置, 从而可以直接断定当前访问是受自动化控制的. 
+这些属性, 正常应该为`undefined`. 在使用某些特定工具时, 这些值会被设置, 从而可以直接断定当前访问是受自动化控制的.
 
-比如`window.navigator.webdriver`, 使用selenium时该项会设为`true`; 
+比如`window.navigator.webdriver`, 使用selenium时该项会设为`true`;
 比如`window.document.$cdc_asdjflasutopfhvcZLmcfl_`是chromedriver的一项特征, 正常的浏览器并没有这个键.
 
 ### 环境信息
@@ -59,7 +59,7 @@ html_meta:
 `tdx.js`也读取了这些信息, 分析它们可以判断当前客户端处在一个什么样的环境. 虽然没有证据. 但我相信`23003`的错误应该就在此检出(雾
 
 #### document.mozHidden
-  
+
 似乎是检查标签页是否可见, 在chromium上为`undefined`
 
 #### navigator
@@ -95,9 +95,9 @@ html_meta:
 - window.innerWidth
 - window.innerHeight
 
-上述这些属性和方法均是被检查的对象. 这些项恐怕也是selenium等工具的优势所在: 它们能和正常浏览器保持一致. 
+上述这些属性和方法均是被检查的对象. 这些项恐怕也是selenium等工具的优势所在: 它们能和正常浏览器保持一致.
 
-当然, 对于普通的爬虫来说, 恐怕不会有这么细致的检查, 毕竟通常我们只爬HTML, 这些情形基本是遇不到的. 
+当然, 对于普通的爬虫来说, 恐怕不会有这么细致的检查, 毕竟通常我们只爬HTML, 这些情形基本是遇不到的.
 但毕竟[QQQR][QQQR]是要直接和验证码作斗争, 其本质不仅仅是爬虫, 使用的工具也是`requests`+`nodejs`的基础组合, 因此这些都是要注意的对象.
 
 ### 用户操作

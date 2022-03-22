@@ -1,5 +1,5 @@
 ---
-date: "2021-08-05"
+date: 2021-08-05
 author: JamzumSum
 html_meta:
     keywords: Python

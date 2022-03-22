@@ -1,5 +1,5 @@
 ---
-date: "2019-12-13"
+date: 2019-12-13
 author: JamzumSum
 html_meta:
     keywords: C++, exiv
@@ -27,7 +27,7 @@ html_meta:
 
 > 我自己是根本不会用什么cmake什么什么的, 但是我知道VS可以帮我干这个. 以前我编译过`tesseract`, 那时候只知道cmake这么个名 ~~(其实现在也一样)~~...
 
-在exiv2的文件夹里`shift+右键`, 点击`用Visual Studio打开`, 如果你没有就用正常办法...打开之后VS会自动建立cmake缓存, 可以看`输出`选项卡看看VS在做什么. 
+在exiv2的文件夹里`shift+右键`, 点击`用Visual Studio打开`, 如果你没有就用正常办法...打开之后VS会自动建立cmake缓存, 可以看`输出`选项卡看看VS在做什么.
 
 然后呢, 我这是报了个错, 说是找不到`EXPAT`, 我百度了一下都是英文, 索性也不看了, 就用`vcpkg`装了一个...
 

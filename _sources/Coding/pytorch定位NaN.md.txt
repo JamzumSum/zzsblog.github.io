@@ -1,5 +1,5 @@
 ---
-date: "2021-08-07"
+date: 2021-08-07
 author: JamzumSum
 html_meta:
     keywords: PyTorch
@@ -71,7 +71,7 @@ assert not torch.any(torch.isnan(T) + torch.isinf(T))
 
 NaN的次常见成因. 顾名思义, 出现NaN仅仅是因为数据里含有NaN. 通常来说直接读图片不会出现NaN, 往往是大意地处理数据后会出现这种情况.
 
-随便举个例子. 
+随便举个例子.
 ~~~{code-block} python
 mask = mask / mask.max()
 # serialize mask

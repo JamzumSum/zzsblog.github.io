@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html  lang="zh_CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<meta content="js, Python" name="keywords" />
+
+      <title>Python 解析不规则 JSON</title>
+    
+          <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../_static/theme.css " type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../_static/theme-vendors.js"></script> -->
+      <script src="../_static/theme.js" defer></script>
+      <link rel="canonical" href="www.zzsblog.top/Coding/python解析不规则json.html" />
+    
+      <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <link rel="author" title="关于这些文档" href="../about.html" />
+  <link rel="index" title="索引" href="../genindex.html" />
+  <link rel="search" title="搜索" href="../search.html" />
+  <link rel="next" title="Pytorch定位NaN" href="pytorch%E5%AE%9A%E4%BD%8DNaN.html" />
+  <link rel="prev" title="Python 数值中的下划线" href="python%E6%95%B0%E5%80%BC%E4%B8%AD%E7%9A%84%E4%B8%8B%E5%88%92%E7%BA%BF.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../index.html" class="home-link">
+    
+      <img class="logo" src="../_static/favicon.png" alt="logo"/>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">快速搜索</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="搜索" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+    
+    <div class="sidebar-group">
+        <p class="caption">
+            <span class="caption-text"><a href="../index.html#id1">分类</a></span>
+        </p>
+        <ul class="">
+            
+            <li class="toctree-l1 ">
+                
+                <a href="index.html"
+                    class="reference internal ">   Coding</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Products/index.html"
+                    class="reference internal ">   Products</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Research/index.html"
+                    class="reference internal ">   Research</a>
+                
+
+                
+            </li>
+
+            
+        </ul>
+    </div>
+    
+    
+        <hr>
+        <div class="sidebar-group">
+            
+            
+            
+
+            <p class="caption">
+<span class="caption-text"><a class="reference internal" href="#">Python 解析不规则 JSON</a><ul class="toctree-l1">
+<li><a class="reference internal" href="#motivation">Motivation</a></span>
+<li><a class="reference internal" href="#demjson">demjson</a></span>
+<li><a class="reference internal" href="#json">手写 JSON 解析器</a></span>
+<li><a class="reference internal" href="#stringify">Stringify</a></span>
+<li><a class="reference internal" href="#ast">ast</a></span>
+<li><a class="reference internal" href="#id1">后记</a></span>
+</ul>
+</span>
+</p>
+
+        </div>
+    
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="index.html">Coding</a> &raquo;</li>
+    
+    <li>Python 解析不规则 JSON</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+  <li class="prev">
+    <a href="python%E6%95%B0%E5%80%BC%E4%B8%AD%E7%9A%84%E4%B8%8B%E5%88%92%E7%BA%BF.html"
+       title="上一章">← Python 数值中的下划线</a>
+  </li>
+  <li class="next">
+    <a href="pytorch%E5%AE%9A%E4%BD%8DNaN.html"
+       title="下一章">Pytorch定位NaN →</a>
+  </li>
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="python-json">
+<h1>Python 解析不规则 JSON<a class="headerlink" href="#python-json" title="永久链接至标题">¶</a></h1>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">aioqzone</span></code>有一个包 <code class="docutils literal notranslate"><span class="pre">jssupport</span></code>，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 <code class="docutils literal notranslate"><span class="pre">jsjson</span></code>，用于解析 Qzone 返回的 js字典对象。</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nx">html</span><span class="o">:</span> <span class="s2">&quot;&lt;html&gt;&lt;/html&gt;&quot;</span><span class="p">,</span>
+    <span class="nx">code</span><span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
+    <span class="nx">hasmore</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">merge</span><span class="o">:</span> <span class="p">[</span><span class="kc">undefined</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如上，这种格式大家一定会想到 <code class="docutils literal notranslate"><span class="pre">JSON</span></code>, 毕竟 <code class="xref py py-meth docutils literal notranslate"><span class="pre">json.loads()</span></code> 实在深入人心。不过上面这段数据并非规范的 JSON，最主要的特征就是键值虽说是字符串，但没有引号。这样的数据直接使用 <code class="xref py py-meth docutils literal notranslate"><span class="pre">json.loads()</span></code> 是会报解析错误的。那到底怎么解析这些数据呢？下文给出我曾经使用过的四种方法。</p>
+</section>
+<section id="demjson">
+<h2>demjson<a class="headerlink" href="#demjson" title="永久链接至标题">¶</a></h2>
+<p>如果你在百度上找 <a class="reference external" href="https://www.baidu.com/s?ie=UTF-8&amp;wd=python%E8%A7%A3%E6%9E%90%E4%B8%8D%E8%A7%84%E5%88%99JSON">python解析不规则JSON</a>，那么很多作者都会告诉你用 <code class="docutils literal notranslate"><span class="pre">demjson</span></code>。我用 <code class="docutils literal notranslate"><span class="pre">demjson</span></code> 用了很长时间，直到感觉爬虫过于缓慢。一番 profiling 之后压力来到了 <code class="docutils literal notranslate"><span class="pre">demjson</span></code> 这边。翻了一下<a class="reference external" href="https://github.com/dmeranda/demjson">仓库</a>，最后一次 commit 是15年；issue 和 PR 也都有年头了。这促使我去自己想办法解决这个问题。</p>
+<blockquote>
+<div><p>PS: <code class="docutils literal notranslate"><span class="pre">demjson</span></code>有一些 fork，比如 <a class="reference external" href="https://pypi.org/project/demjson3/">demjson3</a>，并没有使用过，不太清楚性能如何。大家可以试试，毕竟 python 不太鼓励造轮子。</p>
+</div></blockquote>
+<p>评分：</p>
+<ul class="simple">
+<li><p>代码规模：A</p></li>
+<li><p>速度：D</p></li>
+<li><p>可维护性：D</p></li>
+</ul>
+</section>
+<section id="json">
+<h2>手写 JSON 解析器<a class="headerlink" href="#json" title="永久链接至标题">¶</a></h2>
+<p>JSON 是一种比较简单的语法，这意味着（用python）写一个解析器其实也不太费劲。我在 <a class="reference external" href="https://github.com/JamzumSum/QQQR/blob/6e3981e426f4b68f7a9dbd8df23d73e17112e0a6/src/jssupport/jsjson.py">Qzone2TG</a> 里使用了这种方案，提速大概几百倍吧，具体多少我忘了。不过这种方案有一定问题，比如：</p>
+<ol class="arabic simple">
+<li><p>我不专业。尽管我有一点编译器知识，但我的思路仍然是 naive 的；写出来的解析器很难看，也很不规范。能用应该是唯一的优点。</p></li>
+<li><p>性能问题。作为一个曾经的C++用户，用 python 写这种代码让我非常难受，感觉性能上存在巨大的提升空间。</p></li>
+<li><p>维护问题。这份代码只有我自己在用，而我发誓写完之后就再也不看这一坨东西了。那么，谁来维护呢？</p></li>
+</ol>
+<p>评分：</p>
+<ul class="simple">
+<li><p>代码规模：D</p></li>
+<li><p>速度：A</p></li>
+<li><p>可维护性：D</p></li>
+</ul>
+</section>
+<section id="stringify">
+<h2>Stringify<a class="headerlink" href="#stringify" title="永久链接至标题">¶</a></h2>
+<p>前文我们已经提到，这段数据其实是个 js字典。那么显然 <code class="docutils literal notranslate"><span class="pre">Node</span></code> 可以直接解析这段数据，然后通过 <code class="docutils literal notranslate"><span class="pre">JSON</span></code> 格式与 Python 交换。由于 <code class="docutils literal notranslate"><span class="pre">jssupport</span></code> 包里有与 node 通信的代码，那么我可以简单的复用一下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.execjs</span> <span class="kn">import</span> <span class="n">ExecJS</span>
+
+<span class="k">class</span> <span class="nc">NodeLoader</span><span class="p">:</span>
+    <span class="n">jsonStringify</span> <span class="o">=</span> <span class="n">ExecJS</span><span class="p">(</span><span class="n">js</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;JSON.stringify&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">json_loads</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">js</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">try_load_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">JsonValue</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonValue</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function converts a string representation of JS/JSON data into a Python object.</span>
+<span class="sd">        It may use :node:meth:`JSON.stringify` to convert js to json.</span>
+
+<span class="sd">        :param js: Used to Pass in the json string.</span>
+<span class="sd">        :param try_load_first: Used to Specify whether to try loading the json string with the `parser` first.</span>
+<span class="sd">        :param parser: Used to Specify the function that will be used to parse the string.</span>
+<span class="sd">        :return: A python object that represents the same content as the js/json string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">try_load_first</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">parser</span><span class="p">(</span><span class="n">js</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">json_str</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">cls</span><span class="o">.</span><span class="n">jsonStringify</span><span class="p">(</span><span class="n">js</span><span class="p">,</span> <span class="n">asis</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parser</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Failed to decode json input!&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;json_str=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">json_str</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+</pre></div>
+</div>
+<p>这段代码很好懂，就是借助 <code class="docutils literal notranslate"><span class="pre">JSON.stringify</span></code> 这个 node 函数把 js 转化为 JSON 然后再读取。不过问题来了：</p>
+<ol class="arabic simple">
+<li><p>进程间通信。启动一个node进程有比较大的资源开销，进程间通信也不是一个特别高效的手段。</p></li>
+<li><p>平台限制。在不同的平台上，<code class="docutils literal notranslate"><span class="pre">subprocess.PIPE</span></code> 有不同的缓冲区大小限制。尽管我在 windows 上没遇到任何问题，但我的数据在 Docker 容器（Linux）内被截断了。在这方面，查找资料很困难。</p></li>
+<li><p>我们从算法的角度考虑：和正常的 JSON 解析器相比，这种方法多读取了一遍字符串。这似乎不是很合理。</p></li>
+</ol>
+<p>评分：</p>
+<ul class="simple">
+<li><p>代码规模：A-</p></li>
+<li><p>速度：B</p></li>
+<li><p>可维护性：B</p></li>
+</ul>
+<blockquote>
+<div><p>问题2是个很复杂的点，如果我有朝一日弄懂了可以考虑再水一篇（</p>
+</div></blockquote>
+</section>
+<section id="ast">
+<h2>ast<a class="headerlink" href="#ast" title="永久链接至标题">¶</a></h2>
+<p>这是目前 <code class="docutils literal notranslate"><span class="pre">aioqzone</span></code> 的默认方法，不过 <a class="reference internal" href="#stringify"><span class="std std-doc">Stringify</span></a> 也被保留了下来。让我们观察数据：如果不考虑变量是否定义、关键字不同等等问题，一个<strong>js 字典似乎和 python 字典没什么两样</strong>。Python 内置 <code class="docutils literal notranslate"><span class="pre">ast</span></code> 库用于解析 python 代码。是不是可以利用它解析 js 字典呢？</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RewriteUndef</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeTransformer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">python_version_tuple</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="c1"># NOTE: visit_Constant not available on py37</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visit_Str</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">))</span>
+
+    <span class="n">const</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;undefined&quot;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;null&quot;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;true&quot;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;false&quot;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">visit_Name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">const</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">const</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">visit_Constant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">return</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>当我们解析一段“Python代码”得到语法树之后，<code class="xref py py-class docutils literal notranslate"><span class="pre">ast.NodeTransformer</span></code>可以用于修改这棵树。我们知道，输入的 js 中其实没有任何变量，因此任何被识别为变量的 token 其实只是没有引号的字符串而已。因此我们在 <code class="docutils literal notranslate"><span class="pre">visit_Name</span></code> 中把变量全换成字符串；关键字方面，如果有名叫 <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>, <code class="docutils literal notranslate"><span class="pre">undefined</span></code>, <code class="docutils literal notranslate"><span class="pre">null</span></code> 的变量，那么应该把他们换成对应的常量。最后，针对 JSON 和 Python 转义规则不一样的问题，需要一个替换把不必要的转义符去掉。</p>
+<blockquote>
+<div><p>py37 支持：<code class="docutils literal notranslate"><span class="pre">visit_Constant</span></code>是 py38 加入的接口，为了支持 py37 需要使用 <code class="docutils literal notranslate"><span class="pre">visit_Str</span></code>.</p>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+
+<span class="k">class</span> <span class="nc">AstLoader</span><span class="p">:</span>
+    <span class="k">class</span> <span class="nc">RewriteUndef</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeTransformer</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">json_loads</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">js</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stdin&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonValue</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The json_loads function loads a JSON object from a js/json string. It uses standard</span>
+<span class="sd">        :mod:`ast` module to parse the js/json.</span>
+
+<span class="sd">        :param js: Used to Pass the js/json string to be parsed.</span>
+<span class="sd">        :param filename: Used to Specify the name of the file that is being read. This is only for debug use.</span>
+<span class="sd">        :return: A jsonvalue object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">node</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">dedent</span><span class="p">(</span><span class="n">js</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eval&quot;</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">fix_missing_locations</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">RewriteUndef</span><span class="p">()</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eval&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>如上，这段代码肯定<strong>不支持解析所有的不规则 JSON</strong>，但对于解析 Qzone 的返回值来说，它很好用。我使用 <code class="docutils literal notranslate"><span class="pre">feeds3_html_more</span></code> 的返回值来测试它的准确性和性能，从速度上来说，它和 <a class="reference internal" href="#json"><span class="std std-doc">解析器方法</span></a>相差无几，是<a class="reference internal" href="#stringify"><span class="std std-doc">Stringify</span></a> 的大概十倍。重要的是，我们使用 python 内置库来处理了这个问题，这意味着这个方案能享受到 python
+版本优化带来的性能提升。多年以前我似乎见过有人使用 <code class="docutils literal notranslate"><span class="pre">ast</span></code> 来处理不规则 json，但我相信这种方法不是主流。</p>
+<p>评分：</p>
+<ul class="simple">
+<li><p>代码规模：A-</p></li>
+<li><p>速度：A</p></li>
+<li><p>可维护性：A</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>后记<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>在 <a class="reference internal" href="#ast"><span class="std std-doc">ast法</span></a> 出问题之前，我想没必要再找一个新法子了。在这方面，有一些第三方库也值得关注，比如 <a class="reference external" href="https://github.com/dpranke/pyjson5">pyjson5</a>, <a class="reference external" href="https://pypi.org/project/demjson3/">demjson3</a>等。不过，等出了事再说换吧（摆烂</p>
+</section>
+</section>
+
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+  <li class="prev">
+    <a href="python%E6%95%B0%E5%80%BC%E4%B8%AD%E7%9A%84%E4%B8%8B%E5%88%92%E7%BA%BF.html"
+       title="上一章">← Python 数值中的下划线</a>
+  </li>
+  <li class="next">
+    <a href="pytorch%E5%AE%9A%E4%BD%8DNaN.html"
+       title="下一章">Pytorch定位NaN →</a>
+  </li>
+</ul><div class="footer" role="contentinfo">
+      &#169; 版权所有 2021-2022, JamzumSum.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.8.0.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>
