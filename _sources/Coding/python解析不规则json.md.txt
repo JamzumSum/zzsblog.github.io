@@ -7,6 +7,8 @@ html_meta:
 
 # Python 解析不规则 JSON
 
+> `解析Qzone3TG`系列第一篇，不规则 JSON 解析器。
+
 ## Motivation
 
 `aioqzone`有一个包 `jssupport`，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 `jsjson`，用于解析 Qzone 返回的 js字典对象。

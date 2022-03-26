@@ -8,5 +8,5 @@
 :glob:
 :maxdepth: 1
 
-Qzone3TG/*
+Qzone3TG/index
 ```

@@ -27,4 +27,4 @@ Python 数值中的下划线起辅助阅读作用，解析的时候和去掉下�
 
 > This PEP proposes to extend Python’s syntax and number-from-string constructors so that underscores can be used as visual separators for digit grouping purposes in integral, floating-point and complex number literals.
 
-[PEP 515](https://peps.python.org/pep-0515/), py36+.
+{pep}`PEP 515 <515>`, py36+.

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html  lang="zh_CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<meta content="Python, async, regexp" name="keywords" />
+
+      <title>re.sub如何异步替换？</title>
+    
+          <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../_static/theme.css " type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../_static/theme-vendors.js"></script> -->
+      <script src="../_static/theme.js" defer></script>
+      <link rel="canonical" href="www.zzsblog.top/Coding/async-sub.html" />
+    
+      <link rel="shortcut icon" href="../_static/favicon.png"/>
+  <link rel="author" title="关于这些文档" href="../about.html" />
+  <link rel="index" title="索引" href="../genindex.html" />
+  <link rel="search" title="搜索" href="../search.html" />
+  <link rel="next" title="使用Exiv2修改图像的EXIF头信息" href="exiv2.html" />
+  <link rel="prev" title="TCaptcha的检测机制" href="TCaptcha%E7%9A%84%E6%A3%80%E6%B5%8B%E6%9C%BA%E5%88%B6.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../index.html" class="home-link">
+    
+      <img class="logo" src="../_static/favicon.png" alt="logo"/>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+  
+    <div class="nav-item">
+      <a href="index.html"
+        class="nav-link external">
+          首页 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="about.html"
+        class="nav-link external">
+          关于 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="donate.html"
+        class="nav-link external">
+          捐赠 <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+    <div class="nav-item">
+      <a href="https://github.com/JamzumSum/zzsblog.github.io"
+        class="nav-link external">
+          GitHub <outboundlink></outboundlink>
+      </a>
+    </div>
+  
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">快速搜索</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="搜索" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+    
+    <div class="sidebar-group">
+        <p class="caption">
+            <span class="caption-text"><a href="../index.html#id1">分类</a></span>
+        </p>
+        <ul class="">
+            
+            <li class="toctree-l1 ">
+                
+                <a href="index.html"
+                    class="reference internal ">   Coding</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Products/index.html"
+                    class="reference internal ">   Products</a>
+                
+
+                
+            </li>
+
+            
+            <li class="toctree-l1 ">
+                
+                <a href="../Research/index.html"
+                    class="reference internal ">   Research</a>
+                
+
+                
+            </li>
+
+            
+        </ul>
+    </div>
+    
+    
+        <hr>
+        <div class="sidebar-group">
+            
+            
+            
+
+            <p class="caption">
+<span class="caption-text"><a class="reference internal" href="#">re.sub如何异步替换？</a><ul class="toctree-l1">
+<li><a class="reference internal" href="#motivation">Motivation</a></span>
+<li><a class="reference internal" href="#solution">Solution</a></span>
+<li><a class="reference internal" href="#id1">后记</a></span>
+</ul>
+</span>
+</p>
+
+        </div>
+    
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="index.html">Coding</a> &raquo;</li>
+    
+    <li>re.sub如何异步替换？</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+  <li class="prev">
+    <a href="TCaptcha%E7%9A%84%E6%A3%80%E6%B5%8B%E6%9C%BA%E5%88%B6.html"
+       title="上一章">← TCaptcha的检测机制</a>
+  </li>
+  <li class="next">
+    <a href="exiv2.html"
+       title="下一章">使用Exiv2修改图像的EXIF头信息 →</a>
+  </li>
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="re-sub">
+<h1>re.sub如何异步替换？<a class="headerlink" href="#re-sub" title="永久链接至标题">¶</a></h1>
+<blockquote>
+<div><p>这是<code class="docutils literal notranslate"><span class="pre">解析Qzone3TG</span></code>系列的第二篇。代码见 <a class="reference external" href="https://github.com/JamzumSum/aioqzone-feed/blob/207b9724d6e89ac17fbcca0406c00bb297c4f6d2/src/aioqzone_feed/api/emoji.py#L31-L59">aioqzone-feed/api/emoji.py</a></p>
+</div></blockquote>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="永久链接至标题">¶</a></h2>
+<p>现在有这样一个需求：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>这是一段[em]e100[/em]富文本[em]e101[/em]，是emotion_cgi_msgdetail_v6的返回[em]102[/em]
+</pre></div>
+</div>
+<p>把上面这段文本里的表情码换成正常人能看的文字或 emoji。大家一眼就能看出来，得用正则表达式。
+这个正则很容易写：<code class="regexp docutils literal notranslate"><span class="pre">\[em\]e(\d+)\[/em\]</span></code>，然后可以用 <code class="xref py py-meth docutils literal notranslate"><span class="pre">re.sub()</span></code> 的 <code class="docutils literal notranslate"><span class="pre">repl</span></code> 参数实现查询调用：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sync_query</span><span class="p">(</span><span class="n">eid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\[em\]e(\d+)\[/em\]&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">sync_query</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span> <span class="ow">or</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>不过事情往往不会如人们想象的那样发展。比如：我们这个 <a class="reference external" href="https://github.com/JamzumSum/QzEmoji/blob/7c85c5d2fcb01631775fc7f2162ad12d98e485b1/src/qzemoji/__init__.py#L59-L61">查询函数</a> 压根不是个同步函数。</p>
+<p>事实上，由于 <code class="docutils literal notranslate"><span class="pre">QzEmoji</span></code> <code class="docutils literal notranslate"><span class="pre">async</span></code> 分支使用的是 <code class="docutils literal notranslate"><span class="pre">sqlalchemy</span></code>+<code class="docutils literal notranslate"><span class="pre">aiosqlite</span></code>，异步查询是我们的本意。
+所以，如何让 <code class="xref py py-meth docutils literal notranslate"><span class="pre">re.sub()</span></code> 支持一个异步的替换函数呢？</p>
+</section>
+<section id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="永久链接至标题">¶</a></h2>
+<p>实际上，我们没办法让 <code class="xref py py-meth docutils literal notranslate"><span class="pre">re.sub()</span></code> 支持一个异步的 <code class="docutils literal notranslate"><span class="pre">async</span></code>。不过，我们可以自己写一个 <code class="xref py py-meth docutils literal notranslate"><span class="pre">sub()</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">r</span><span class="p">,</span> <span class="n">tasks</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="n">base</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">)):</span>
+    <span class="n">fr</span><span class="p">,</span> <span class="n">to</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">base</span><span class="p">:</span><span class="n">fr</span><span class="p">])</span>  <span class="c1"># save un-replaced string as is</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">repl</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">result</span><span class="p">()))</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">to</span>
+<span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">base</span><span class="p">:])</span>
+</pre></div>
+</div>
+<p>我们用 <code class="xref py py-meth docutils literal notranslate"><span class="pre">re.finditer()</span></code> 找出所有表情码的位置。对于每一个表情码 <span class="math notranslate nohighlight">\(e_i = text[from_i, to_i]\)</span> 来说，它的 <span class="math notranslate nohighlight">\(from_i\)</span> 到上一个表情码的 <span class="math notranslate nohighlight">\(to_{i-1}\)</span> 之间这段串 <span class="math notranslate nohighlight">\(p_i = text[to_{i-1}, from_i]\)</span> 是不需要修改的，
+直接保存就可以，我们记做 <span class="math notranslate nohighlight">\(p_i\)</span>；每一个表情码对应一个异步查询任务，它的完成回调是给 <span class="math notranslate nohighlight">\(p_i\)</span> 串追加查询结果，即 <span class="math notranslate nohighlight">\(p_i += query(e_i)\)</span>。最后不要忘了，最后一个表情码之后也可能有不需要改变的文字 <span class="math notranslate nohighlight">\(p_{n+1} = text[to_n:]\)</span>。</p>
+<p>记得生成的任务都要存起来，然后我们 <code class="xref py py-meth docutils literal notranslate"><span class="pre">asyncio.wait(tasks)()</span></code> 等待所有任务都结束。在这之后，把 <span class="math notranslate nohighlight">\(p_0, ... p_{n+1}\)</span>
+拼起来就可以了：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">tasks</span><span class="p">:</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+<span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>后记<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>关于性能，我并没有做过验证。不过从经验推测，文本中只有一两个表情码的话，我想异步 <code class="xref py py-meth docutils literal notranslate"><span class="pre">sub()</span></code> 的速度赶不上 <code class="docutils literal notranslate"><span class="pre">re.sub</span></code>。不过如果有比较多的表情码的话，异步优势还是能显现的。</p>
+</section>
+</section>
+
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+  <li class="prev">
+    <a href="TCaptcha%E7%9A%84%E6%A3%80%E6%B5%8B%E6%9C%BA%E5%88%B6.html"
+       title="上一章">← TCaptcha的检测机制</a>
+  </li>
+  <li class="next">
+    <a href="exiv2.html"
+       title="下一章">使用Exiv2修改图像的EXIF头信息 →</a>
+  </li>
+</ul><div class="footer" role="contentinfo">
+      &#169; 版权所有 2021-2022, JamzumSum.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.8.0.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>
