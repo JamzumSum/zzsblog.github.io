@@ -5,7 +5,7 @@ html_meta:
     keywords: PyTorch
 ---
 
-# Pytorch定位NaN
+# Pytorch 如何定位 NaN？
 
 > 有关内容在网上其实有一些比较系统的文章, 但水文更多一点相对不太好找. 这里结合我自己的经验再总结一下.
 

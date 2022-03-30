@@ -5,7 +5,7 @@ html_meta:
     keywords: C++, exiv
 ---
 
-# 使用Exiv2修改图像的EXIF头信息
+# 如何修改图像的 EXIF 头信息？
 
 写了一个下载必应美图的程序. 然而还没完, 我一直想改一下![这个东西](_static/exiv2/example.png)...当时注意力就在这些什么"详细信息"啊, "属性"之类的上面, 搜啊搜啊, 也没找到什么办法...
 
@@ -59,7 +59,7 @@ endif()
 
 > 本来网上有几篇写这个的, 但我为什么还要写一遍呢? 因为网上的(至少是我看见的)都是读EXIF信息, 没有写入的, 为此我绕了个弯子, 所以发出来给大伙瞧瞧写入照比读取要多了什么(你能猜到罢?)
 
-```{code-block} cpp
+```cpp
 void BingPicker::addCopyRight(const QString& filepath, const QString& copyright) {
     using namespace Exiv2;
     //这改成unique_ptr了, 发现没?
@@ -72,7 +72,7 @@ void BingPicker::addCopyRight(const QString& filepath, const QString& copyright)
     image->setExifData(ed);         //note this
     image->writeMetadata();
 }
-```{code-block}
+```
 
 额, 网上没有写入的例子, 我是在官网文档给的例子里找了一阵子把下面两句补上的. 你猜得没错, 写入是要保存的, `setExifData`和`writeMetadata`就是写入的关键, 之前只顾着找网上现成的抄, 运行了发现根本没写进去, 为此一顿好找...
 

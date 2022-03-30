@@ -5,7 +5,7 @@ html_meta:
     keywords: crawler, tcaptcha, Qzone, Qzone2TG
 ---
 
-# TCaptcha的检测机制
+# TCaptcha 有哪些检测机制？
 
 ## 前言
 

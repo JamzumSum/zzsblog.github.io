@@ -11,7 +11,7 @@ orphan: true
 
 > Buy me a cup of coffee☕
 
-前往{{ '[捐赠页](https://{}/donate.html)'.format(cname) }}❤️
+前往 [捐赠页](donate) ❤️
 
 
 [profile]: https://github.com/JamzumSum "My GitHub Profile"
