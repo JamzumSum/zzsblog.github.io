@@ -1,0 +1,12 @@
+.dashed {
+    border-style: dashed;
+    border-color: var(--color-link);
+    border-width: 2px;
+    transition: .5s ease;
+    padding: 8px 0;
+}
+
+.dashed:hover {
+    background-color: var(--color-link);
+    color: white;
+}

@@ -1,0 +1,124 @@
+/* landing page banner */
+
+figure.landing-banner {
+    position: relative;
+    box-sizing: border-box;
+    margin: 0 0 24px 0;
+}
+
+figure.landing-banner img{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+figure.landing-banner figcaption {
+    position: absolute;
+    bottom: 0;
+    background: rgb(0, 0, 0);
+    background: rgba(0, 0, 0, 0.5); /* Black see-through */
+    color: #f1f1f1;
+    width: 100%;
+    color: white;
+    font-size: var(--font-size--normal);
+    text-align: justify;
+    height: 50%;
+    border-radius: 24px 24px 0 0;
+}
+
+figure.landing-banner figcaption p {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: fit-content;
+    padding: 0 20px;
+    margin: auto;
+}
+
+figure.landing-banner figcaption a {
+    text-decoration: none;
+}
+
+figure.landing-banner figcaption code {
+    background: none;
+    border: none;
+}
+
+/* landing page category-blocks */
+
+div.landing-cate-wall {
+    padding: 24px 0;
+}
+
+div.landing-cate-line {
+    justify-content: space-between;
+    display: flex;
+}
+
+div.landing-cate-line figure:first-child {
+    margin-left: 0;
+}
+
+div.landing-cate-line figure:last-child {
+    margin-right: 0;
+}
+
+figure.landing-cate {
+    position: relative;
+    box-sizing: border-box;
+    display: inline;
+    width: 30%;
+}
+
+figure.landing-cate img{
+    display: inline;
+    width: 100%;
+    height: auto;
+}
+
+figure.landing-cate figcaption {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: rgb(0, 0, 0);
+    background: rgba(0, 0, 0, 0.5); /* Black see-through */
+    color: #f1f1f1;
+    width: 100%;
+    color: white;
+    font-size: 125%;
+    text-align: justify;
+    height: 100%;
+    transition: .5s ease;
+    opacity: 0;
+}
+
+figure.landing-cate figcaption:hover {
+    opacity: 1;
+}
+
+figure.landing-cate figcaption p {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: fit-content;
+    width: fit-content;
+    padding: 0 16px;
+    margin: auto;
+}
+
+figure.landing-cate figcaption a {
+    text-decoration: none;
+    color: white;
+}
+
+figure.landing-cate figcaption code {
+    background: none;
+    border: none;
+}
+
+/* landing headers */
+div.dashed {
+    text-align: center;
+}
