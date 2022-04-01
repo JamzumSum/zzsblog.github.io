@@ -6,40 +6,54 @@ figure.landing-banner {
     margin: 0 0 24px 0;
 }
 
-figure.landing-banner img{
+figure[class*=landing-] img{
     display: block;
     width: 100%;
     height: auto;
 }
 
-figure.landing-banner figcaption {
+figure[class*=landing-] figcaption {
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     bottom: 0;
     background: rgb(0, 0, 0);
     background: rgba(0, 0, 0, 0.5); /* Black see-through */
     color: #f1f1f1;
     width: 100%;
     color: white;
+    height: max-content;
+    max-height: 100%;
+}
+
+figure.landing-banner figcaption {
+    min-height: 50%;
     font-size: var(--font-size--normal);
-    text-align: justify;
-    height: 50%;
     border-radius: 24px 24px 0 0;
 }
 
-figure.landing-banner figcaption p {
-    position: absolute;
-    top: 0;
-    bottom: 0;
+
+figure[class*=landing-] figcaption p {
+    position: relative;
     height: fit-content;
-    padding: 0 20px;
-    margin: auto;
+    padding: 16px 16px;
+    margin: 0;
+    text-align: justify;
 }
 
-figure.landing-banner figcaption a {
+figure[class*=landing-] figcaption p a {
     text-decoration: none;
 }
 
-figure.landing-banner figcaption code {
+figure[class*=landing-] figcaption p a.headerlink {
+    width: 0;
+    height: 0;
+    margin: 0;
+    visibility: hidden;
+}
+
+figure[class*=landing-] figcaption p code {
     background: none;
     border: none;
 }
@@ -70,23 +84,9 @@ figure.landing-cate {
     width: 30%;
 }
 
-figure.landing-cate img{
-    display: inline;
-    width: 100%;
-    height: auto;
-}
-
 figure.landing-cate figcaption {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    background: rgb(0, 0, 0);
-    background: rgba(0, 0, 0, 0.5); /* Black see-through */
-    color: #f1f1f1;
-    width: 100%;
-    color: white;
-    font-size: 125%;
-    text-align: justify;
+    --font-size--large: 125%;
+    font-size: var(--font-size--large);
     height: 100%;
     transition: .5s ease;
     opacity: 0;
@@ -96,29 +96,41 @@ figure.landing-cate figcaption:hover {
     opacity: 1;
 }
 
-figure.landing-cate figcaption p {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: fit-content;
-    width: fit-content;
-    padding: 0 16px;
-    margin: auto;
-}
-
-figure.landing-cate figcaption a {
-    text-decoration: none;
+figure.landing-cate figcaption p a {
     color: white;
-}
-
-figure.landing-cate figcaption code {
-    background: none;
-    border: none;
 }
 
 /* landing headers */
 div.dashed {
     text-align: center;
+}
+
+/* logo */
+a.sidebar-brand {
+    flex-direction: row;
+    padding: var(--sidebar-item-spacing-vertical) 0;
+    align-items: center
+}
+
+a.sidebar-brand div.sidebar-logo-container {
+    margin: var(--sidebar-item-spacing-vertical) var(--sidebar-item-spacing-horizontal);
+    width: fit-content;
+}
+
+a.sidebar-brand div.sidebar-logo-container img.sidebar-logo {
+    height: 32px;
+    margin-top: 1px; /* fix not aligned */
+}
+
+a.sidebar-brand span.sidebar-brand-text {
+    width: fit-content;
+    margin: var(--sidebar-item-spacing-vertical) 0;
+}
+
+/* mobile */
+
+@media (max-width: 67em) {
+    figure.landing-cate figcaption {
+        opacity: 1;
+    }
 }

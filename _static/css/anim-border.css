@@ -10,3 +10,9 @@
     background-color: var(--color-link);
     color: white;
 }
+
+@media (max-width: 67em) {
+    .dashed {
+        border-style: solid;
+    }
+}

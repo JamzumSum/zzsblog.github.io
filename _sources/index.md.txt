@@ -24,7 +24,7 @@ STUDY NOTES <Research/index>
 Github <https://github.com/JamzumSum/zzsblog.github.io>
 ```
 
-```{figure} https://unsplash.com/photos/q10VITrVYUM/download?ixid=MnwxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNjQ4Njk4Nzc5&force=true&w=1920
+```{figure} _static/banner.jpg
 :alt: banner
 :figclass: landing-banner
 
