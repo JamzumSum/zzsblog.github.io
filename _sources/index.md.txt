@@ -21,7 +21,7 @@ STUDY NOTES <Research/index>
 
 关于 <about>
 捐赠 <donate>
-Github <https://github.com/JamzumSum/zzsblog.github.io>
+Github <https://github.com/JamzumSum/zzsblog>
 ```
 
 ```{figure} _static/banner.jpg

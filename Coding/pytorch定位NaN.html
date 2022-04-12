@@ -4,13 +4,15 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 <meta content="PyTorch" name="keywords" />
-<link rel="author" title="关于这些文档" href="../about.html" /><link rel="index" title="索引" href="../genindex.html" /><link rel="search" title="搜索" href="../search.html" /><link rel="next" title="不能连外网的机器怎么下包？" href="%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%AD%A3%E5%B8%B8%E7%94%A8%E9%80%94.html" /><link rel="prev" title="Python 如何解析不规则 JSON？" href="python%E8%A7%A3%E6%9E%90%E4%B8%8D%E8%A7%84%E5%88%99json.html" />
+<link rel="author" title="关于这些文档" href="../about.html" /><link rel="index" title="索引" href="../genindex.html" /><link rel="search" title="搜索" href="../search.html" /><link rel="next" title="不能连外网的机器怎么搭环境？" href="ssh%E5%8F%8D%E4%BB%A3.html" /><link rel="prev" title="Python 如何解析不规则 JSON？" href="python%E8%A7%A3%E6%9E%90%E4%B8%8D%E8%A7%84%E5%88%99json.html" />
+        <link rel="canonical" href="zzsblog.top/Coding/pytorch定位NaN.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.5.0, furo 2022.03.04"/>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
         <title>Pytorch 如何定位 NaN？ - 鸽园</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     <link rel="stylesheet" type="text/css" href="../_static/css/landing.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/anim-border.css" />
     
@@ -42,10 +44,12 @@
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
@@ -170,7 +174,7 @@
 <li class="toctree-l2"><a class="reference internal" href="python%E6%95%B0%E5%80%BC%E4%B8%AD%E7%9A%84%E4%B8%8B%E5%88%92%E7%BA%BF.html">Python 数值中的下划线是什么意思？</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python%E8%A7%A3%E6%9E%90%E4%B8%8D%E8%A7%84%E5%88%99json.html">Python 如何解析不规则 JSON？</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Pytorch 如何定位 NaN？</a></li>
-<li class="toctree-l2"><a class="reference internal" href="%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%AD%A3%E5%B8%B8%E7%94%A8%E9%80%94.html">不能连外网的机器怎么下包？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssh%E5%8F%8D%E4%BB%A3.html">不能连外网的机器怎么搭环境？</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../Products/index.html">PRODUCT TOPIC</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -187,7 +191,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../about.html">关于</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../donate.html">捐赠</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/JamzumSum/zzsblog.github.io">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/JamzumSum/zzsblog">Github</a></li>
 </ul>
 
 </div>
@@ -313,12 +317,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%9A%84%E6%AD%A3%E5%B8%B8%E7%94%A8%E9%80%94.html">
+          <a class="next-page" href="ssh%E5%8F%8D%E4%BB%A3.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">不能连外网的机器怎么下包？</div>
+                <div class="title">不能连外网的机器怎么搭环境？</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
