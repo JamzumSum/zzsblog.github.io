@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Python 如何解析不规则 JSON？ - 鸽园</title><meta name="description" content="解析Qzone3TG系列第一篇，不规则 JSON 解析器。 aioqzone有一个包 jssupport，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 jsjson，用于解析 Qzone 返回的&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://zzsblog.top/parsing-irregular-json.html"><link rel="amphtml" href="https://zzsblog.top/amp/parsing-irregular-json.html"><link rel="alternate" type="application/atom+xml" href="https://zzsblog.top/feed.xml"><link rel="alternate" type="application/json" href="https://zzsblog.top/feed.json"><meta property="og:title" content="Python 如何解析不规则 JSON？"><meta property="og:image" content="https://zzsblog.top/media/posts/4/download1"><meta property="og:site_name" content="鸽园"><meta property="og:description" content="解析Qzone3TG系列第一篇，不规则 JSON 解析器。 aioqzone有一个包 jssupport，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 jsjson，用于解析 Qzone 返回的&hellip;"><meta property="og:url" content="https://zzsblog.top/parsing-irregular-json.html"><meta property="og:type" content="article"><link rel="shortcut icon" href="https://zzsblog.top/media/website/favicon.png" type="image/png"><link rel="stylesheet" href="https://zzsblog.top/assets/css/style.css?v=ebde456a0982dc3b4cf9161f1fc0c160"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://zzsblog.top/parsing-irregular-json.html"},"headline":"Python 如何解析不规则 JSON？","datePublished":"2022-03-22T20:04","dateModified":"2022-07-31T20:50","image":{"@type":"ImageObject","url":"https://zzsblog.top/media/posts/4/download1","height":false,"width":false},"description":"解析Qzone3TG系列第一篇，不规则 JSON 解析器。 aioqzone有一个包 jssupport，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 jsjson，用于解析 Qzone 返回的&hellip;","author":{"@type":"Person","name":"JamzumSum","url":"https://zzsblog.top/author/jamzumsum/"},"publisher":{"@type":"Organization","name":"JamzumSum","logo":{"@type":"ImageObject","url":"https://zzsblog.top/media/website/favicon-2.png","height":480,"width":480}}}</script><script>window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      processEscapes: true,
+    }
+  }</script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script><link href="https://cdn.jsdelivr.net/npm/prismjs@v1.x/themes/prism.css" rel="stylesheet"></head><body><script src="https://cdn.jsdelivr.net/npm/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://cdn.jsdelivr.net/npm/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script><div class="container"><header class="header" id="js-header"><a href="https://zzsblog.top/" class="logo"><img src="https://zzsblog.top/media/website/favicon-2.png" alt="鸽园" width="480" height="480"></a><nav class="navbar js-navbar"><button class="navbar__toggle js-toggle" aria-label="Menu"><span class="navbar__toggle-box"><span class="navbar__toggle-inner">Menu</span></span></button><ul class="navbar__menu"><li><a href="https://zzsblog.top/" title="Goto Homepage" target="_self">Home</a></li><li class="has-submenu"><a href="https://zzsblog.top/tag/" title="Categories" target="_blank" aria-haspopup="true">Categories</a><ul class="navbar__submenu level-2" aria-hidden="true"><li><a href="https://zzsblog.top/tag/coding/" title="Coding" target="_blank">Coding</a></li><li><a href="https://zzsblog.top/tag/qzone2tg/" title="Collections of Qzone2TG posts" target="_self">Qzone2TG</a></li></ul></li><li><a href="https://zzsblog.top/about.html" title="About me" target="_self">About</a></li><li><span class="is-separator">|</span></li><li><a href="https://github.com/JamzumSum/zzsblog" title="Goto blog repo on GitHub" target="_blank">GitHub</a></li><li><a href="https://zzsblog.top/merger.html" title="Buy me a cup of coffee☕" target="_blank">Donate</a></li></ul></nav></header><main><article class="post wrapper"><header class="hero"><p class="post__meta">Published on <time datetime="2022-03-22T20:04">22/03/22</time></p><h1 class="post__title">Python 如何解析不规则 JSON？</h1></header><figure class="post__featured-image post__image--wide"><img src="https://zzsblog.top/media/posts/4/download1" loading="eager" height="1440" width="1920" alt="brown brick pavement"><figcaption>Irregular @natura_photos</figcaption></figure><div class="post__entry"><blockquote><p><code>解析Qzone3TG</code>系列第一篇，不规则 JSON 解析器。</p></blockquote><h2 id="motivation">Motivation</h2><p><code>aioqzone</code>有一个包 <code>jssupport</code>，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 <code>jsjson</code>，用于解析 Qzone 返回的 js字典对象。</p><pre><code class="language-js">{
+    html: &quot;&lt;html&gt;&lt;/html&gt;&quot;,
+    code: 0,
+    hasmore: true,
+    merge: [undefined]
+}
+</code></pre><p>如上，这种格式大家一定会想到 <code>JSON</code>, 毕竟 {meth}<code>json.loads</code> 实在深入人心。不过上面这段数据并非规范的 JSON，最主要的特征就是键值虽说是字符串，但没有引号。这样的数据直接使用 <code>json.loads</code> 是会报解析错误的。那到底怎么解析这些数据呢？下文给出我曾经使用过的四种方法。</p><h2 id="demjson">demjson</h2><p>如果你在百度上找 <a href="https://www.baidu.com/s?ie=UTF-8&amp;wd=python%E8%A7%A3%E6%9E%90%E4%B8%8D%E8%A7%84%E5%88%99JSON">python解析不规则JSON</a>，那么很多作者都会告诉你用 <code>demjson</code>。我用 <code>demjson</code> 用了很长时间，直到感觉爬虫过于缓慢。一番 profiling 之后压力来到了 <code>demjson</code> 这边。翻了一下<a href="https://github.com/dmeranda/demjson">仓库</a>，最后一次 commit 是15年；issue 和 PR 也都有年头了。这促使我去自己想办法解决这个问题。</p><blockquote><p>PS: <code>demjson</code>有一些 fork，比如 <a href="https://pypi.org/project/demjson3/">demjson3</a>，并没有使用过，不太清楚性能如何。大家可以试试，毕竟 python 不太鼓励造轮子。</p></blockquote><p>评分：</p><ul><li>代码规模：A</li><li>速度：D</li><li>可维护性：D</li></ul><h2 id="手写-json-解析器">手写 JSON 解析器</h2><p>JSON 是一种比较简单的语法，这意味着（用python）写一个解析器其实也不太费劲。我在 <a href="https://github.com/JamzumSum/QQQR/blob/6e3981e426f4b68f7a9dbd8df23d73e17112e0a6/src/jssupport/jsjson.py">Qzone2TG</a> 里使用了这种方案，提速大概几百倍吧，具体多少我忘了。不过这种方案有一定问题，比如：</p><ol><li>我不专业。尽管我有一点编译器知识，但我的思路仍然是 naive 的；写出来的解析器很难看，也很不规范。能用应该是唯一的优点。</li><li>性能问题。作为一个曾经的C++用户，用 python 写这种代码让我非常难受，感觉性能上存在巨大的提升空间。</li><li>维护问题。这份代码只有我自己在用，而我发誓写完之后就再也不看这一坨东西了。那么，谁来维护呢？</li></ol><p>评分：</p><ul><li>代码规模：D</li><li>速度：A</li><li>可维护性：D</li></ul><h2 id="stringify">Stringify</h2><p>前文我们已经提到，这段数据其实是个 js字典。那么显然 <code>Node</code> 可以直接解析这段数据，然后通过 <code>JSON</code> 格式与 Python 交换。由于 <code>jssupport</code> 包里有与 node 通信的代码，那么我可以简单的复用一下：</p><pre><code class="language-python">from .execjs import ExecJS
+
+class NodeLoader:
+    jsonStringify = ExecJS(js=&quot;&quot;).bind(&quot;JSON.stringify&quot;, new=False)
+
+    @classmethod
+    async def json_loads(
+        cls, js: str, try_load_first: bool = True, parser: Callable[[str], JsonValue] = json.loads
+    ) -&gt; JsonValue:
+        &quot;&quot;&quot;
+        This function converts a string representation of JS/JSON data into a Python object.
+        It may use :node:meth:`JSON.stringify` to convert js to json.
+
+        :param js: Used to Pass in the json string.
+        :param try_load_first: Used to Specify whether to try loading the json string with the `parser` first.
+        :param parser: Used to Specify the function that will be used to parse the string.
+        :return: A python object that represents the same content as the js/json string.
+        &quot;&quot;&quot;
+        if try_load_first:
+            try:
+                return parser(js)
+            except json.JSONDecodeError:
+                pass
+
+        json_str = await cls.jsonStringify(js, asis=True)
+        try:
+            return parser(json_str)
+        except json.JSONDecodeError as e:
+            logger.exception(&quot;Failed to decode json input!&quot;)
+            logger.debug(&quot;json_str=%s&quot;, json_str)
+            raise e
+</code></pre><p>这段代码很好懂，就是借助 <code>JSON.stringify</code> 这个 node 函数把 js 转化为 JSON 然后再读取。不过问题来了：</p><ol><li>进程间通信。启动一个node进程有比较大的资源开销，进程间通信也不是一个特别高效的手段。</li><li>平台限制。在不同的平台上，<code>subprocess.PIPE</code> 有不同的缓冲区大小限制。尽管我在 windows 上没遇到任何问题，但我的数据在 Docker 容器（Linux）内被截断了。在这方面，查找资料很困难。</li><li>我们从算法的角度考虑：和正常的 JSON 解析器相比，这种方法多读取了一遍字符串。这似乎不是很合理。</li></ol><p>评分：</p><ul><li>代码规模：A-</li><li>速度：B</li><li>可维护性：B</li></ul><blockquote><p>问题2是个很复杂的点，如果我有朝一日弄懂了可以考虑再水一篇（</p></blockquote><h2 id="ast">ast</h2><p>这是目前 <code>aioqzone</code> 的默认方法，不过 <a href="#stringify">Stringify</a> 也被保留了下来。让我们观察数据：如果不考虑变量是否定义、关键字不同等等问题，一个<strong>js 字典似乎和 python 字典没什么两样</strong>。Python 内置 <code>ast</code> 库用于解析 python 代码。是不是可以利用它解析 js 字典呢？</p><pre><code class="language-python">class RewriteUndef(ast.NodeTransformer):
+    def __init__(self) -&gt; None:
+        if int(python_version_tuple()[1]) &lt; 8:
+            # NOTE: visit_Constant not available on py37
+            self.visit_Str = lambda node: ast.Str(s=node.s.replace(&quot;\\/&quot;, &quot;/&quot;))
+
+    const = {
+        &quot;undefined&quot;: ast.Constant(value=None),
+        &quot;null&quot;: ast.Constant(value=None),
+        &quot;true&quot;: ast.Constant(value=True),
+        &quot;false&quot;: ast.Constant(value=False),
+    }
+
+    def visit_Name(self, node: ast.Name):
+        if node.id in self.const:
+            return self.const[node.id]
+        return ast.Str(s=node.id)
+
+    def visit_Constant(self, node: ast.Constant) -&gt; Union[ast.Constant, ast.Str]:
+        if not isinstance(node.value, str):
+            return node
+        return ast.Str(s=node.value.replace(&quot;\\/&quot;, &quot;/&quot;))
+</code></pre><p>当我们解析一段“Python代码”得到语法树之后，<code>ast.NodeTransformer</code>可以用于修改这棵树。我们知道，输入的 js 中其实没有任何变量，因此任何被识别为变量的 token 其实只是没有引号的字符串而已。因此我们在 <code>visit_Name</code> 中把变量全换成字符串；关键字方面，如果有名叫 <code>true</code>, <code>false</code>, <code>undefined</code>, <code>null</code> 的变量，那么应该把他们换成对应的常量。最后，针对 JSON 和 Python 转义规则不一样的问题，需要一个替换把不必要的转义符去掉。</p><blockquote><p>py37 支持：<code>visit_Constant</code>是 py38 加入的接口，为了支持 py37 需要使用 <code>visit_Str</code>.</p></blockquote><pre><code class="language-python">from textwrap import dedent
+
+class AstLoader:
+    class RewriteUndef(ast.NodeTransformer): ...
+
+    @classmethod
+    def json_loads(cls, js: str, filename: str = &quot;stdin&quot;) -&gt; JsonValue:
+        &quot;&quot;&quot;
+        The json_loads function loads a JSON object from a js/json string. It uses standard
+        :mod:`ast` module to parse the js/json.
+
+        :param js: Used to Pass the js/json string to be parsed.
+        :param filename: Used to Specify the name of the file that is being read. This is only for debug use.
+        :return: A jsonvalue object.
+        &quot;&quot;&quot;
+
+        node = ast.parse(dedent(js), mode=&quot;eval&quot;)
+        node = ast.fix_missing_locations(cls.RewriteUndef().visit(node))
+        code = compile(node, filename, mode=&quot;eval&quot;)
+        return eval(code)
+</code></pre><p>如上，这段代码肯定<strong>不支持解析所有的不规则 JSON</strong>，但对于解析 Qzone 的返回值来说，它很好用。我使用 <code>feeds3_html_more</code> 的返回值来测试它的准确性和性能，从速度上来说，它和 <a href="#%E6%89%8B%E5%86%99-json-%E8%A7%A3%E6%9E%90%E5%99%A8">解析器方法</a>相差无几，是<a href="#stringify">Stringify</a> 的大概十倍。重要的是，我们使用 python 内置库来处理了这个问题，这意味着这个方案能享受到 python 版本优化带来的性能提升。多年以前我似乎见过有人使用 <code>ast</code> 来处理不规则 json，但我相信这种方法不是主流。</p><p>评分：</p><ul><li>代码规模：A-</li><li>速度：A</li><li>可维护性：A</li></ul><h2 id="后记">后记</h2><p>在 <a href="#ast">ast法</a> 出问题之前，我想没必要再找一个新法子了。在这方面，有一些第三方库也值得关注，比如 <a href="https://github.com/dpranke/pyjson5">pyjson5</a>, <a href="https://pypi.org/project/demjson3/">demjson3</a>等。不过，等出了事再说换吧（摆烂</p></div><footer class="post__footer"><div class="post__footer__col"><ul class="post__tag"><li><a href="https://zzsblog.top/tag/coding/">Coding</a></li><li><a href="https://zzsblog.top/tag/python/">Python</a></li><li><a href="https://zzsblog.top/tag/qzone2tg/">Qzone2TG</a></li></ul><div class="post__share"></div></div><nav class="post__nav"><div class="post__nav__prev">Previous Post<h5><a href="https://zzsblog.top/tcaptcha.html" class="inverse" rel="prev">TCaptcha 有哪些检测机制？</a></h5></div><div class="post__nav__next">Next Post<h5><a href="https://zzsblog.top/ssh-reverse-proxy.html" class="inverse" rel="next">不能连外网的机器怎么搭环境？</a></h5></div></nav><div class="post__related"><h3 class="u-h5">Related posts</h3><div class="post__related__wrap"><figure><a href="https://zzsblog.top/underscore-in-python-number.html"><img src="https://zzsblog.top/media/posts/5/responsive/download1-2-xs" loading="lazy" alt="assorted numbers"></a><figcaption><h4><a href="https://zzsblog.top/underscore-in-python-number.html" class="inverse">Python 数值中的下划线是什么意思？</a></h4><time datetime="2021-08-05T20:10">21/08/05</time></figcaption></figure></div></div></footer></article></main><footer class="footer"><div class="footer__copyright">Powered by Publii</div></footer></div><script defer="defer" src="https://zzsblog.top/assets/js/scripts.min.js?v=620157e86bfc246cfef480b1b4aadb48"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'sidebar',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:true,relatedContainerForOverlayMenuSelector:'.navbar'};</script><script>/*<![CDATA[*/var images=document.querySelectorAll("img[loading]");for(var i=0;i<images.length;i++){if(images[i].complete){images[i].classList.add("is-loaded")}else{images[i].addEventListener("load",function(){this.classList.add("is-loaded")},false)}};/*]]>*/</script></body></html>

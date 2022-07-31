@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>鸽园</title>
+    <link href="https://zzsblog.top/feed.xml" rel="self" />
+    <link href="https://zzsblog.top" />
+    <updated>2022-07-31T21:09:45+08:00</updated>
+    <author>
+        <name>JamzumSum</name>
+    </author>
+    <id>https://zzsblog.top</id>
+
+    <entry>
+        <title>如何修改图像的 EXIF 头信息？</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/edit-exif-header.html"/>
+        <id>https://zzsblog.top/edit-exif-header.html</id>
+            <category term="Coding"/>
+            <category term="C++"/>
+
+        <updated>2022-07-31T20:11:09+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/3/download2" alt="white wooden block table" />
+                    写了一个下载必应美图的程序. 然而还没完, 我一直想改一下…当时注意力就在这些什么”详细信息”啊, “属性”之类的上面, 搜啊搜啊, 也没找到什么办法… 今天早晨拿两个文件做对比试验, 于是发现修改了详细信息的文件(JPEG)会多出来一个”头部”, 一番搜索知道了这个叫EXIF头信息, 于是就有了下面这篇文章. 我就不跟你们说我从哪找来这么个玩意儿的事了, 反正就是百度上搜两三个读写EXIF的库,&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/3/download2" alt="white wooden block table" />
+                <p>写了一个下载必应美图的程序. 然而还没完, 我一直想改一下<figure class="post__image"><img decoding="async" loading="lazy" src="https://zzsblog.top/media/posts/3/example.png" sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://zzsblog.top/media/posts/3/responsive/example-xs.png 300w ,https://zzsblog.top/media/posts/3/responsive/example-sm.png 480w ,https://zzsblog.top/media/posts/3/responsive/example-md.png 768w ,https://zzsblog.top/media/posts/3/responsive/example-lg.png 1024w"  alt="这个东西" width="543" height="771" /></figure>…当时注意力就在这些什么”详细信息”啊, “属性”之类的上面, 搜啊搜啊, 也没找到什么办法…</p>
+<p>今天早晨拿两个文件做对比试验, 于是发现修改了详细信息的文件(JPEG)会多出来一个”头部”, 一番搜索知道了这个叫<code>EXIF</code>头信息, 于是就有了下面这篇文章.</p>
+<h2 id="编译exiv2">编译<a href="https://www.exiv2.org/">Exiv2</a></h2>
+<blockquote>
+<p>我就不跟你们说我从哪找来这么个玩意儿的事了, 反正就是百度上搜两三个读写EXIF的库, 看看哪个好点…</p>
+</blockquote>
+<p>从Exiv2的官网上下载了<code>2017msvc64</code>的build包, 加载到自己的项目里就炸了. 原因很奇怪, 说是没有<code>std::auto_ptr</code>这种类型. 当年看<em>Effective C++</em> 的时候见过这个类型, 肿么就没有了捏? 网上一查知道, <code>auto_ptr</code>这种类型在C++11的时候就已经废弃了, C++17时把它移除了. C++语言标准一直都是17, 所以没有这个类型.</p>
+<p>我当时一寻思, 我是不太乐意改语言标准的, 因为我比较喜欢尝试新特性…所以就试着自己编译一下.</p>
+<h3 id="git-clone">git clone</h3>
+<p>这步你们都懂罢, 拉一份最新的源码下来, 仓库在官网下载页里有, 我就不贴命令了</p>
+<h3 id="用vs-cmake编译exiv2">用VS Cmake编译Exiv2</h3>
+<blockquote>
+<p>我自己是根本不会用什么cmake什么什么的, 但是我知道VS可以帮我干这个. 以前我编译过<code>tesseract</code>, 那时候只知道cmake这么个名 <del>(其实现在也一样)</del>…</p>
+</blockquote>
+<p>在exiv2的文件夹里<code>shift+右键</code>, 点击<code>用Visual Studio打开</code>, 如果你没有就用正常办法…打开之后VS会自动建立cmake缓存, 可以看<code>输出</code>选项卡看看VS在做什么.</p>
+<p>然后呢, 我这是报了个错, 说是找不到<code>EXPAT</code>, 我百度了一下都是英文, 索性也不看了, 就用<code>vcpkg</code>装了一个…</p>
+<pre><code class="language-{code-block}">vcpkg install expat:x64-windows
+</code></pre>
+<p>注意我一直是x64平台编译, 所以只安装64位的, 如果你也用x86, 那还要安装x86版本的.</p>
+<p>这里给微软打个广告, <a href="https://docs.microsoft.com/zh-cn/cpp/build/vcpkg?view=vs-2017">vcpkg</a>虽然平时的项目里不知道为啥不好使, 但是在cmake的时候真的是帮我这种小白好大忙, 缺什么包敲个命令就好了, 不用我自己下载编译什么的.</p>
+<p>依赖问题解决, cmake缓存正常, 这时候我去src里面找源码, 发现源码里面居然一个<code>auto_ptr</code>都没有??? 可能是从git上拉下来的比较新罢, 我也不知道是怎么回事(不敢相信.jpg).</p>
+<p>下一步, 告诉编译器我要C++17标准的, 这个找了半天, 我下面写一段代码, <strong>不保证一定是对的</strong>, 我只能说我编译出来了, 而且用起来没问题.</p>
+<pre><code class="language-{code-block}">include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG(&quot;/std:c++17&quot; _cpp_17_flag_supported)
+if (_cpp_17_flag_supported)
+    add_compile_options(&quot;/std:c++17&quot;)
+endif()
+</code></pre>
+<p>把上面这段代码附加到<code>Cmakelists.txt</code>末尾, 全部生成, 一切正常. 安装exiv2, 完毕.</p>
+<p>这些做完了之后不要关VS, 现在只是编译了<code>x64-Debug</code>版本的, 到配置管理器里添加一个Release版本的再来一次, 省得发布的时候再折腾.</p>
+<h2 id="使用exiv2">使用Exiv2</h2>
+<blockquote>
+<p>本来网上有几篇写这个的, 但我为什么还要写一遍呢? 因为网上的(至少是我看见的)都是读EXIF信息, 没有写入的, 为此我绕了个弯子, 所以发出来给大伙瞧瞧写入照比读取要多了什么(你能猜到罢?)</p>
+</blockquote>
+<pre><code class="language-cpp">void BingPicker::addCopyRight(const QString&amp; filepath, const QString&amp; copyright) {
+    using namespace Exiv2;
+    //这改成unique_ptr了, 发现没?
+    Image::UniquePtr image = ImageFactory::open(filepath.toStdString());
+    assert(image.get());
+
+    image-&gt;readMetadata();
+    ExifData ed = image-&gt;exifData();
+    ed[&quot;Exif.Image.Copyright&quot;] = copyright.toStdString();
+    image-&gt;setExifData(ed);         //note this
+    image-&gt;writeMetadata();
+}
+</code></pre>
+<p>额, 网上没有写入的例子, 我是在官网文档给的例子里找了一阵子把下面两句补上的. 你猜得没错, 写入是要保存的, <code>setExifData</code>和<code>writeMetadata</code>就是写入的关键, 之前只顾着找网上现成的抄, 运行了发现根本没写进去, 为此一顿好找…</p>
+<p>上面<code>ExifData::operator[]</code>返回的是一个引用, 如果没有这个键值会直接新建一个(参考map的<code>operator[]</code>), 用法很直觉, 不用担心段错误.</p>
+<h2 id="结尾">结尾</h2>
+<p>我把浏览器关了, 就不找之前看过啥教程了..这把写的比较详细应该…感谢StackOverflow上提问的老哥, 我在回答里翻出来了cmake切换C++语言标准的代码…感谢网上两篇<code>exiv2</code>读EXIF的教程</p>
+<p>照例感谢一万篇教程的作者们.</p>
+<p>源码-&gt; <a href="https://github.com/JamzumSum/BingPicker">GitHub</a>, 还有Release版本可供下载哦(滑稽)</p>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>re.sub如何异步替换？</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/async-re-sub.html"/>
+        <id>https://zzsblog.top/async-re-sub.html</id>
+            <category term="Qzone2TG"/>
+            <category term="Python"/>
+            <category term="Coding"/>
+
+        <updated>2022-07-31T20:51:15+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/1/download1-2" alt="two white flying rockets during daytime" />
+                    这是解析Qzone3TG系列的第二篇。代码见 aioqzone-feed/api/emoji.py 现在有这样一个需求： 这是一段[em]e100[/em]富文本[em]e101[/em]，是emotion_cgi_msgdetail_v6的返回[em]102[/em] 把上面这段文本里的表情码换成正常人能看的文字或 emoji。大家一眼就能看出来，得用正则表达式。 这个正则很容易写：\[em\]e(\d+)\[/em\]，然后可以用 re.sub 的 repl 参数实现查询调用： def&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/1/download1-2" alt="two white flying rockets during daytime" />
+                <blockquote>
+<p>这是<code>解析Qzone3TG</code>系列的第二篇。代码见 <a href="https://github.com/JamzumSum/aioqzone-feed/blob/207b9724d6e89ac17fbcca0406c00bb297c4f6d2/src/aioqzone_feed/api/emoji.py#L31-L59" title="aioqzone-feed/api/emoji.py::sub">aioqzone-feed/api/emoji.py</a></p>
+</blockquote>
+<h2 id="motivation">Motivation</h2>
+<p>现在有这样一个需求：</p>
+<pre><code>这是一段[em]e100[/em]富文本[em]e101[/em]，是emotion_cgi_msgdetail_v6的返回[em]102[/em]
+</code></pre>
+<p>把上面这段文本里的表情码换成正常人能看的文字或 emoji。大家一眼就能看出来，得用正则表达式。
+这个正则很容易写：<code>\[em\]e(\d+)\[/em\]</code>，然后可以用 <code>re.sub</code> 的 <code>repl</code> 参数实现查询调用：</p>
+<pre><code class="language-python">def sync_query(eid: int) -&gt; str | None: ...
+
+re.sub(r&quot;\[em\]e(\d+)\[/em\]&quot;, lambda m: sync_query(int(m.group(1))) or m.group(0), text)
+</code></pre>
+<p>不过事情往往不会如人们想象的那样发展。比如：我们这个 <a href="https://github.com/JamzumSum/QzEmoji/blob/7c85c5d2fcb01631775fc7f2162ad12d98e485b1/src/qzemoji/__init__.py#L59-L61">查询函数</a> 压根不是个同步函数。</p>
+<p>事实上，由于 <code>QzEmoji</code> <code>async</code> 分支使用的是 <code>sqlalchemy</code>+<code>aiosqlite</code>，异步查询是我们的本意。
+所以，如何让 <code>re.sub</code> 支持一个异步的替换函数呢？</p>
+<h2 id="solution">Solution</h2>
+<p>实际上，我们没办法让 <code>re.sub</code> 支持一个异步的 <code>async</code>。不过，我们可以自己写一个 <code>sub</code>。</p>
+<pre><code class="language-python">r, tasks = [], []
+base = 0
+for i, m in enumerate(pattern.finditer(text)):
+    fr, to = m.span(0)
+    r.append(text[base:fr])  # save un-replaced string as is
+    task = asyncio.create_task(repl(m))
+    task.add_done_callback(lambda t, idx=i: r.__setitem__(idx, r[idx] + t.result()))
+    tasks.append(task)
+    base = to
+r.append(text[base:])
+</code></pre>
+<p>我们用 <code>re.finditer</code> 找出所有表情码的位置。对于每一个表情码 $e_i = text[from_i, to_i]$ 来说，它的 $from_i$ 到上一个表情码的 $to_{i-1}$ 之间这段串 $p_i = text[to_{i-1}, from_i]$ 是不需要修改的，
+直接保存就可以，我们记做 $p_i$；每一个表情码对应一个异步查询任务，它的完成回调是给 $p_i$ 串追加查询结果，即 $p_i += query(e_i)$。最后不要忘了，最后一个表情码之后也可能有不需要改变的文字 $p_{n+1} = text[to_n:]$。</p>
+<p>记得生成的任务都要存起来，然后我们 <code>asyncio.wait(tasks)</code> 等待所有任务都结束。在这之后，把 $p_0, … p_{n+1}$
+拼起来就可以了：</p>
+<pre><code class="language-python">if tasks: await asyncio.wait(tasks)
+return &quot;&quot;.join(r)
+</code></pre>
+<h2 id="后记">后记</h2>
+<p>关于性能，我并没有做过验证。不过从经验推测，文本中只有一两个表情码的话，我想异步 <code>sub</code> 的速度赶不上 <code>re.sub</code>。不过如果有比较多的表情码的话，异步优势还是能显现的。</p>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>不能连外网的机器怎么搭环境？</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/ssh-reverse-proxy.html"/>
+        <id>https://zzsblog.top/ssh-reverse-proxy.html</id>
+            <category term="Shell"/>
+
+        <updated>2022-07-31T20:49:24+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/7/download1" alt="person holding black camera lens" />
+                    Motivation 有很多服务器是被限制只能在内网访问。不论是 conda, pip, docker 还是 apt, 不能访问公网都是一大难题。 这篇不讲如何直接解决这类问题，我们讲讲怎样快速建立一条反代通道。 唯一的要求是，本机需要有正在运行的代理。 这里这个“代理”用的是计算机网络中的基本含义，并没有其他乱七八糟的功能（ 以下应该把&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/7/download1" alt="person holding black camera lens" />
+                <h2 id="motivation">Motivation</h2>
+<p>有很多服务器是被限制只能在内网访问。不论是 conda, pip, docker 还是 apt, 不能访问公网都是一大难题。
+这篇不讲如何直接解决这类问题，我们讲讲怎样快速建立一条反代通道。</p>
+<h2 id="工具">工具</h2>
+<p>唯一的要求是，本机需要有正在运行的代理。
+这里这个“代理”用的是计算机网络中的基本含义，并没有其他乱七八糟的功能（</p>
+<p>以下应该把 <code>&lt;local_port&gt;</code>/<code>&lt;remote_port&gt;</code> 换成实际的端口号，<code>&lt;REMOTE&gt;</code>换成ssh配置名或主机名。</p>
+<ul>
+<li>本地终端：<pre><code class="language-shell">ssh -NR &lt;remote_port&gt;:localhost:&lt;local_port&gt; &lt;REMOTE&gt;
+</code></pre>
+</li>
+<li>远程终端：设置代理即可<pre><code class="language-shell">export https_proxy=http://localhost:&lt;remote_port&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="后记">后记</h2>
+<p>conda, curl 这些都支持 <code>https_proxy</code> 的配置。</p>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Python 如何解析不规则 JSON？</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/parsing-irregular-json.html"/>
+        <id>https://zzsblog.top/parsing-irregular-json.html</id>
+            <category term="Qzone2TG"/>
+            <category term="Python"/>
+            <category term="Coding"/>
+
+        <updated>2022-07-31T20:50:55+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/4/download1" alt="brown brick pavement" />
+                    解析Qzone3TG系列第一篇，不规则 JSON 解析器。 aioqzone有一个包 jssupport，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 jsjson，用于解析 Qzone 返回的&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/4/download1" alt="brown brick pavement" />
+                <blockquote>
+<p><code>解析Qzone3TG</code>系列第一篇，不规则 JSON 解析器。</p>
+</blockquote>
+<h2 id="motivation">Motivation</h2>
+<p><code>aioqzone</code>有一个包 <code>jssupport</code>，专门处理 Qzone 各种 js-style 的返回值。其中有一个模块叫 <code>jsjson</code>，用于解析 Qzone 返回的 js字典对象。</p>
+<pre><code class="language-js">{
+    html: &quot;&lt;html&gt;&lt;/html&gt;&quot;,
+    code: 0,
+    hasmore: true,
+    merge: [undefined]
+}
+</code></pre>
+<p>如上，这种格式大家一定会想到 <code>JSON</code>, 毕竟 {meth}<code>json.loads</code> 实在深入人心。不过上面这段数据并非规范的 JSON，最主要的特征就是键值虽说是字符串，但没有引号。这样的数据直接使用 <code>json.loads</code> 是会报解析错误的。那到底怎么解析这些数据呢？下文给出我曾经使用过的四种方法。</p>
+<h2 id="demjson">demjson</h2>
+<p>如果你在百度上找 <a href="https://www.baidu.com/s?ie=UTF-8&amp;wd=python%E8%A7%A3%E6%9E%90%E4%B8%8D%E8%A7%84%E5%88%99JSON">python解析不规则JSON</a>，那么很多作者都会告诉你用 <code>demjson</code>。我用 <code>demjson</code> 用了很长时间，直到感觉爬虫过于缓慢。一番 profiling 之后压力来到了 <code>demjson</code> 这边。翻了一下<a href="https://github.com/dmeranda/demjson">仓库</a>，最后一次 commit 是15年；issue 和 PR 也都有年头了。这促使我去自己想办法解决这个问题。</p>
+<blockquote>
+<p>PS: <code>demjson</code>有一些 fork，比如 <a href="https://pypi.org/project/demjson3/">demjson3</a>，并没有使用过，不太清楚性能如何。大家可以试试，毕竟 python 不太鼓励造轮子。</p>
+</blockquote>
+<p>评分：</p>
+<ul>
+<li>代码规模：A</li>
+<li>速度：D</li>
+<li>可维护性：D</li>
+</ul>
+<h2 id="手写-json-解析器">手写 JSON 解析器</h2>
+<p>JSON 是一种比较简单的语法，这意味着（用python）写一个解析器其实也不太费劲。我在 <a href="https://github.com/JamzumSum/QQQR/blob/6e3981e426f4b68f7a9dbd8df23d73e17112e0a6/src/jssupport/jsjson.py">Qzone2TG</a> 里使用了这种方案，提速大概几百倍吧，具体多少我忘了。不过这种方案有一定问题，比如：</p>
+<ol>
+<li>我不专业。尽管我有一点编译器知识，但我的思路仍然是 naive 的；写出来的解析器很难看，也很不规范。能用应该是唯一的优点。</li>
+<li>性能问题。作为一个曾经的C++用户，用 python 写这种代码让我非常难受，感觉性能上存在巨大的提升空间。</li>
+<li>维护问题。这份代码只有我自己在用，而我发誓写完之后就再也不看这一坨东西了。那么，谁来维护呢？</li>
+</ol>
+<p>评分：</p>
+<ul>
+<li>代码规模：D</li>
+<li>速度：A</li>
+<li>可维护性：D</li>
+</ul>
+<h2 id="stringify">Stringify</h2>
+<p>前文我们已经提到，这段数据其实是个 js字典。那么显然 <code>Node</code> 可以直接解析这段数据，然后通过 <code>JSON</code> 格式与 Python 交换。由于 <code>jssupport</code> 包里有与 node 通信的代码，那么我可以简单的复用一下：</p>
+<pre><code class="language-python">from .execjs import ExecJS
+
+class NodeLoader:
+    jsonStringify = ExecJS(js=&quot;&quot;).bind(&quot;JSON.stringify&quot;, new=False)
+
+    @classmethod
+    async def json_loads(
+        cls, js: str, try_load_first: bool = True, parser: Callable[[str], JsonValue] = json.loads
+    ) -&gt; JsonValue:
+        &quot;&quot;&quot;
+        This function converts a string representation of JS/JSON data into a Python object.
+        It may use :node:meth:`JSON.stringify` to convert js to json.
+
+        :param js: Used to Pass in the json string.
+        :param try_load_first: Used to Specify whether to try loading the json string with the `parser` first.
+        :param parser: Used to Specify the function that will be used to parse the string.
+        :return: A python object that represents the same content as the js/json string.
+        &quot;&quot;&quot;
+        if try_load_first:
+            try:
+                return parser(js)
+            except json.JSONDecodeError:
+                pass
+
+        json_str = await cls.jsonStringify(js, asis=True)
+        try:
+            return parser(json_str)
+        except json.JSONDecodeError as e:
+            logger.exception(&quot;Failed to decode json input!&quot;)
+            logger.debug(&quot;json_str=%s&quot;, json_str)
+            raise e
+</code></pre>
+<p>这段代码很好懂，就是借助 <code>JSON.stringify</code> 这个 node 函数把 js 转化为 JSON 然后再读取。不过问题来了：</p>
+<ol>
+<li>进程间通信。启动一个node进程有比较大的资源开销，进程间通信也不是一个特别高效的手段。</li>
+<li>平台限制。在不同的平台上，<code>subprocess.PIPE</code> 有不同的缓冲区大小限制。尽管我在 windows 上没遇到任何问题，但我的数据在 Docker 容器（Linux）内被截断了。在这方面，查找资料很困难。</li>
+<li>我们从算法的角度考虑：和正常的 JSON 解析器相比，这种方法多读取了一遍字符串。这似乎不是很合理。</li>
+</ol>
+<p>评分：</p>
+<ul>
+<li>代码规模：A-</li>
+<li>速度：B</li>
+<li>可维护性：B</li>
+</ul>
+<blockquote>
+<p>问题2是个很复杂的点，如果我有朝一日弄懂了可以考虑再水一篇（</p>
+</blockquote>
+<h2 id="ast">ast</h2>
+<p>这是目前 <code>aioqzone</code> 的默认方法，不过 <a href="#stringify">Stringify</a> 也被保留了下来。让我们观察数据：如果不考虑变量是否定义、关键字不同等等问题，一个<strong>js 字典似乎和 python 字典没什么两样</strong>。Python 内置 <code>ast</code> 库用于解析 python 代码。是不是可以利用它解析 js 字典呢？</p>
+<pre><code class="language-python">class RewriteUndef(ast.NodeTransformer):
+    def __init__(self) -&gt; None:
+        if int(python_version_tuple()[1]) &lt; 8:
+            # NOTE: visit_Constant not available on py37
+            self.visit_Str = lambda node: ast.Str(s=node.s.replace(&quot;\\/&quot;, &quot;/&quot;))
+
+    const = {
+        &quot;undefined&quot;: ast.Constant(value=None),
+        &quot;null&quot;: ast.Constant(value=None),
+        &quot;true&quot;: ast.Constant(value=True),
+        &quot;false&quot;: ast.Constant(value=False),
+    }
+
+    def visit_Name(self, node: ast.Name):
+        if node.id in self.const:
+            return self.const[node.id]
+        return ast.Str(s=node.id)
+
+    def visit_Constant(self, node: ast.Constant) -&gt; Union[ast.Constant, ast.Str]:
+        if not isinstance(node.value, str):
+            return node
+        return ast.Str(s=node.value.replace(&quot;\\/&quot;, &quot;/&quot;))
+</code></pre>
+<p>当我们解析一段“Python代码”得到语法树之后，<code>ast.NodeTransformer</code>可以用于修改这棵树。我们知道，输入的 js 中其实没有任何变量，因此任何被识别为变量的 token 其实只是没有引号的字符串而已。因此我们在 <code>visit_Name</code> 中把变量全换成字符串；关键字方面，如果有名叫 <code>true</code>, <code>false</code>, <code>undefined</code>, <code>null</code> 的变量，那么应该把他们换成对应的常量。最后，针对 JSON 和 Python 转义规则不一样的问题，需要一个替换把不必要的转义符去掉。</p>
+<blockquote>
+<p>py37 支持：<code>visit_Constant</code>是 py38 加入的接口，为了支持 py37 需要使用 <code>visit_Str</code>.</p>
+</blockquote>
+<pre><code class="language-python">from textwrap import dedent
+
+class AstLoader:
+    class RewriteUndef(ast.NodeTransformer): ...
+
+    @classmethod
+    def json_loads(cls, js: str, filename: str = &quot;stdin&quot;) -&gt; JsonValue:
+        &quot;&quot;&quot;
+        The json_loads function loads a JSON object from a js/json string. It uses standard
+        :mod:`ast` module to parse the js/json.
+
+        :param js: Used to Pass the js/json string to be parsed.
+        :param filename: Used to Specify the name of the file that is being read. This is only for debug use.
+        :return: A jsonvalue object.
+        &quot;&quot;&quot;
+
+        node = ast.parse(dedent(js), mode=&quot;eval&quot;)
+        node = ast.fix_missing_locations(cls.RewriteUndef().visit(node))
+        code = compile(node, filename, mode=&quot;eval&quot;)
+        return eval(code)
+</code></pre>
+<p>如上，这段代码肯定<strong>不支持解析所有的不规则 JSON</strong>，但对于解析 Qzone 的返回值来说，它很好用。我使用 <code>feeds3_html_more</code> 的返回值来测试它的准确性和性能，从速度上来说，它和 <a href="#%E6%89%8B%E5%86%99-json-%E8%A7%A3%E6%9E%90%E5%99%A8">解析器方法</a>相差无几，是<a href="#stringify">Stringify</a> 的大概十倍。重要的是，我们使用 python 内置库来处理了这个问题，这意味着这个方案能享受到 python
+版本优化带来的性能提升。多年以前我似乎见过有人使用 <code>ast</code> 来处理不规则 json，但我相信这种方法不是主流。</p>
+<p>评分：</p>
+<ul>
+<li>代码规模：A-</li>
+<li>速度：A</li>
+<li>可维护性：A</li>
+</ul>
+<h2 id="后记">后记</h2>
+<p>在 <a href="#ast">ast法</a> 出问题之前，我想没必要再找一个新法子了。在这方面，有一些第三方库也值得关注，比如 <a href="https://github.com/dpranke/pyjson5">pyjson5</a>, <a href="https://pypi.org/project/demjson3/">demjson3</a>等。不过，等出了事再说换吧（摆烂</p>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>TCaptcha 有哪些检测机制？</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/tcaptcha.html"/>
+        <id>https://zzsblog.top/tcaptcha.html</id>
+            <category term="Qzone2TG"/>
+            <category term="Python"/>
+            <category term="Coding"/>
+
+        <updated>2022-07-31T21:09:45+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/8/download1" alt="white concrete building near green trees during daytime" />
+                    前言 由于我最近在做QQQR的验证码部分, 比如, 在Qzone2TG的前面一些版本里, 我都是用selenium爬取图像配合模拟拖动来做的, 当然也需要一点点的cv技术. 但上面这种办法虽说理论可行, 但并非真的万无一失. 事实上, 在一开始开发的时候跑通之后, 这个办法就再也没好用过. 等到后来我用selenium抓二维码登录,&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/8/download1" alt="white concrete building near green trees during daytime" />
+                <h2 id="前言">前言</h2>
+<p>由于我最近在做<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>的验证码部分, 比如<figure class="post__image"><img decoding="async" loading="lazy" src="https://zzsblog.top/media/posts/8/tcapcha-screenshot.png" sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-xs.png 300w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-sm.png 480w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-md.png 768w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-lg.png 1024w"  alt="Image description" width="563" height="384" /></figure>, 在Qzone2TG的前面一些版本里, 我都是用selenium爬取图像配合模拟拖动来做的, 当然也需要一点点的cv技术.</p>
+<p>但上面这种办法虽说理论可行, 但并非真的万无一失. 事实上, 在一开始开发的时候跑通之后, 这个办法就再也没好用过. 等到后来我用selenium抓二维码登录, 乃至<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>的第一个版本能够实现协议二维码登录的时候, 我就更不想用这种不可靠的办法了.</p>
+<p>直到<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>的开发到了<code>2.3.0</code>, 我囿于一种执着重新开始研究验证码的破解之道, 在长达十余天乃至可想见的数十天中仔细研究抓包结果和TCaptcha相关的js代码, 我才终于意识到, 使用selenium这些模拟登录的办法究竟处在一种怎样危险的境地.</p>
+<p>截至目前, 我还没有搞定<code>23003 网络环境异常</code>的问题. 我相信唯一让我露馅的可能就在于验证码检测的时候. 尽管如此, 我仍然发现了很多tx检测浏览器特征的”小动作”.</p>
+<blockquote>
+<p>2022年6月16到17号tx似乎升级了tcaptcha，然而应该只是简化流程，基本的逻辑、采集的信息都没有太大变化。</p>
+</blockquote>
+<h2 id="tdxjs">tdx.js</h2>
+<p>在加载TCapcha的时候, 页面会载入<code>tdx.js</code>. 这整个一个JS就是一个…虚拟机, 用我自己能明白的话来说就是一个指令集+栈+纸带(雾)的组合. 我在这上是个外行, 有的时候不明白加密何至于搞这么大的阵仗. 但不得不承认, js混淆+这种叫做<code>TENCENT_CHAOS_VM</code>的技术的确可以大大阻碍我们这些不守规矩的人(嚣张. 但可惜, tx自己搞了个什么大赛, 这种虚拟机的机制已经参赛的大佬们看透了. 我这种一开始蒙在鼓里的人, 在Github上一搜, 也就明白得差不多了.</p>
+<p>上面所说的, 指令集+栈+纸带的组合其实就完全确定了程序的逻辑. 我的目的也就是在这一团糊糊里找出tx究竟搜集了什么信息进而判断出我不对劲的 :(</p>
+<p>我首先尝试了一些手动反汇编的办法, 给每个命令加输出, 类似编译器. 但, 应该说是受限于我本身的水平, 得到的结果不够准确, 没法交给机器处理, 也就没大用. 不过从另一个角度, 这一步让我真正地深入到了指令运行的内部, 从而为后面的调试打下了基础.</p>
+<h2 id="到底检测了什么">到底检测了什么</h2>
+<p>背景和步骤到此为止, 没有再多说的必要了. 下面就是列出一些检测的条目, 给包括我在内的初出茅庐的人们一点警醒: selenium等等这些模拟手段没那么”真”.</p>
+<h3 id="自动化测试工具">自动化测试工具</h3>
+<p>这一类比较泛用, 是确切的用来检测客户端是否受自动化控制的办法.</p>
+<ul>
+<li>window.callPhantom</li>
+<li>window._phantom</li>
+<li>window.WebPage</li>
+<li>window.fxdriver_id</li>
+<li>window.__fxdriver_unwrapped</li>
+<li>window.domAutomation</li>
+<li>window.ubot</li>
+<li>window.CasperError</li>
+<li>window.casper</li>
+<li>window.patchRequire</li>
+<li>navigator.webdriver</li>
+<li>document.$cdc_asdjflasutopfhvcZLmcfl_</li>
+<li>document.__webdriver_script_fn</li>
+</ul>
+<p>这些属性, 正常应该为<code>undefined</code>. 在使用某些特定工具时, 这些值会被设置, 从而可以直接断定当前访问是受自动化控制的.</p>
+<p>比如<code>window.navigator.webdriver</code>, 使用selenium时该项会设为<code>true</code>;
+比如<code>window.document.$cdc_asdjflasutopfhvcZLmcfl_</code>是chromedriver的一项特征, 正常的浏览器并没有这个键.</p>
+<h3 id="环境信息">环境信息</h3>
+<p><code>tdx.js</code>也读取了这些信息, 分析它们可以判断当前客户端处在一个什么样的环境. 虽然没有证据. 但我相信<code>23003</code>的错误应该就在此检出(雾</p>
+<h4 id="documentmozhidden">document.mozHidden</h4>
+<p>似乎是检查标签页是否可见, 在chromium上为<code>undefined</code></p>
+<h4 id="navigator">navigator</h4>
+<ul>
+<li>navigator.userAgent</li>
+<li>navigator.appVersion</li>
+<li>navigator.platform</li>
+<li>navigator.cookieEnabled</li>
+<li>navigator.languages</li>
+<li>navigator.vendor</li>
+<li>navigator.appName</li>
+<li>navigator.plugins</li>
+<li>navigator.getBattery</li>
+</ul>
+<h4 id="document--location">document &amp; location</h4>
+<ul>
+<li>document.charset</li>
+<li>document.cookie</li>
+<li>document.referrer</li>
+<li>document.documentElement.clientWidth</li>
+<li>document.documentElement.clientHeight</li>
+<li>document.getElementById</li>
+<li>location.href</li>
+</ul>
+<h4 id="screen--other-display-properties">screen &amp; other display properties</h4>
+<ul>
+<li>screen.colorDepth</li>
+<li>screen.width</li>
+<li>screen.height</li>
+<li>screen.availHeight</li>
+<li>screen.pixelDepth</li>
+<li>window.innerWidth</li>
+<li>window.innerHeight</li>
+</ul>
+<p>上述这些属性和方法均是被检查的对象. 这些项恐怕也是selenium等工具的优势所在: 它们能和正常浏览器保持一致.</p>
+<p>当然, 对于普通的爬虫来说, 恐怕不会有这么细致的检查, 毕竟通常我们只爬HTML, 这些情形基本是遇不到的.
+但毕竟<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>是要直接和验证码作斗争, 其本质不仅仅是爬虫, 使用的工具也是<code>requests</code>+<code>nodejs</code>的基础组合, 因此这些都是要注意的对象.</p>
+<h4 id="操作环境">操作环境</h4>
+<p>Tcaptcha 会尝试在环境中调用 <code>CreateElement</code>, <code>FindElementById</code> 等函数，创建和修改包括 <code>img</code>, <code>iframe</code>等在内的众多元素。目前尚未可知创建这些元素是否关联其他操作，不过这对我们使用的模拟环境也是一个考验。</p>
+<h3 id="用户操作">用户操作</h3>
+<p>人类访问是需要操作的, 而爬虫没这个必要. 因此<code>tdx.js</code>也收集用户的动作. （正常情况下是通过Listener收集的，但当<code>CreateElement</code>不可用的时候会暴露<code>tdc.set_data</code>，允许外部传入模拟的数据）</p>
+<ul>
+<li>客户端类型(手机/PC)</li>
+<li>坐标系(验证码位置, 缩放比)</li>
+<li>拖动拼图时鼠标的时间-坐标关系</li>
+</ul>
+<blockquote>
+<p>未完待续</p>
+</blockquote>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Pytorch 如何定位 NaN？</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/pytorch-detect-nan.html"/>
+        <id>https://zzsblog.top/pytorch-detect-nan.html</id>
+            <category term="Python"/>
+            <category term="PyTorch"/>
+            <category term="Coding"/>
+
+        <updated>2022-07-31T20:48:09+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/6/download1-3" alt="orange and black bug on green leaf" />
+                    有关内容在网上其实有一些比较系统的文章, 但灌水很多相对不太好找. 这里结合我自己的经验再总结一下. 注：本文讨论的是单精度训练。半精度训练会有更多的NaN成因，但不在本文讨论之列。 检查NaN有三板斧, 尽管调试NaN通常需要一定的经验和耐心, 但记住这三个至少不至于手足无措. torch.autograd.set_detect_anomaly(True) 如题, forward时出现NaN即时报错. 尽管说得好听, 但有的时候并不能准确地定位问题所在.
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/6/download1-3" alt="orange and black bug on green leaf" />
+                <blockquote>
+<p>有关内容在网上其实有一些比较系统的文章, 但灌水很多相对不太好找. 这里结合我自己的经验再总结一下.</p>
+</blockquote>
+<blockquote>
+<p>注：本文讨论的是<strong>单精度训练</strong>。半精度训练会有更多的NaN成因，但不在本文讨论之列。</p>
+</blockquote>
+<h2 id="三板斧">三板斧</h2>
+<p>检查NaN有三板斧, 尽管调试NaN通常需要一定的经验和耐心, 但记住这三个至少不至于手足无措.</p>
+<h3 id="1-正向传播异常侦测">#1 正向传播异常侦测</h3>
+<pre><code class="language-python">torch.autograd.set_detect_anomaly(True)
+</code></pre>
+<p>如题, forward时出现NaN即时报错. 尽管说得好听, 但有的时候并不能准确地定位问题所在. 属于调试NaN的必要辅助.</p>
+<h3 id="2-反向传播异常侦测">#2 反向传播异常侦测</h3>
+<pre><code class="language-python"># loss = model(X)
+with torch.autograd.detect_anomaly():
+    loss.backward()
+</code></pre>
+<p>如题, backward时出现NaN时即时报错. 相比#1来说更难确切定位问题, 往往用于兜底, 即确保出现NaN时程序会尽快抛出异常.</p>
+<h3 id="3-assert">#3 assert</h3>
+<p>我们已经知道，NaN是一种具有传染性的错误。<strong>NaN debugging的关键问题是定位第一个NaN出现的位置。</strong></p>
+<p>在pytorch中, 检查NaN的函数为<code>torch.isnan(T)</code>. 于是我们可以构造如下断言:</p>
+<pre><code class="language-python">assert not torch.any(torch.isnan(T))
+</code></pre>
+<blockquote>
+<p>当然, 这么写其实有一点性能浪费, 但写python, 又是debug专用代码, 何必考虑这么多呢¯\_(ツ)_/¯</p>
+</blockquote>
+<p>这是一个需要判断力的方法：将这个断言加在你认为有可能出现NaN的步骤之后. 你的判断可以帮助你少加断言、快速找到第一现场。
+不过没找到第一现场也不用担心，尽管这个现场已经漂移, 你也可以利用调试器的堆栈功能快速搜寻真正的事发现场.</p>
+<h2 id="nan的可能原因">NaN的可能原因</h2>
+<p>讲完三板斧总得讲讲NaN的成因, 要不然就是光有方法没有理论(x 尤其是#3, 要求调试者非常充分且熟练地掌握NaN的可能成因.</p>
+<h3 id="梯度爆炸">梯度爆炸</h3>
+<p>梯度爆炸, 或者梯度消失都可能导致NaN. 这个问题往往会被#2 反向传播异常检测捕获, 但真正定位到问题却难上加难. 相对来说, 重新推导一遍自己的理论模型、寻找可能导致梯度爆炸的计算显得更有针对性.</p>
+<h3 id="计算不合法">计算不合法</h3>
+<p>这也是NaN最常见的成因. 毕竟大多数的网络, 尤其是复现、组合别人的网络结构一般不会碰到梯度爆炸的问题, 而NaN大多出现于loss计算的部分, 诞生于某个小小的不合法计算, 然后污染它参与计算的所有结果, 最后在你的loss值上表现出来.</p>
+<p>常见套路:</p>
+<ul>
+<li>$ log(x), x \leq 0 $</li>
+<li>$ c/0 $</li>
+</ul>
+<blockquote>
+<p>尚有其他的一些情况我自己没遇到过, 网上可能会有补充</p>
+</blockquote>
+<p>这种问题运气好的话会被#1 正向异常检测直接找到, 但通常是找到一个漂移了亿点点的位置. 推荐用#3 assert的办法, 尤其是 <strong>自己写了loss时</strong>, 在关键位置放几个assert守门, 总归是没错的.</p>
+<p>注意, 绝大多数时候, inf也是不合常理的存在. 因此你可能也需要同时寻找inf:</p>
+<pre><code class="language-python">assert not torch.any(torch.isnan(T) + torch.isinf(T))
+</code></pre>
+<h3 id="脏数据">脏数据</h3>
+<p>NaN的次常见成因. 顾名思义, 出现NaN仅仅是因为数据里含有NaN. 通常来说直接读图片不会出现NaN, 往往是大意地处理数据后会出现这种情况.</p>
+<p>随便举个例子.</p>
+<pre><code class="language-python">mask = mask / mask.max()
+# serialize mask
+</code></pre>
+<p>这句话看起来没问题, 把uint8{0, 255}转成float32[0, 1]. 相信很多人都这么写过. 正常来说不会有任何问题, 直到我遇到了一张纯黑的mask :P</p>
+<p>毕竟谁也不会想到有一张图没标注还给放数据集里了是吧. 但不管怎么说, 此时我们犯了”除零”的错误. 这个mask会变成携带NaN的脏数据输入模型, 并在计算loss时将loss结果污染. 如果程序没有及时终止, 在仅仅一次反向传播之后, 你的模型参数将变为NaN, 其一切推导将得出NaN ¯\_(ツ)_/¯</p>
+<h2 id="检查nan的一般步骤">检查NaN的一般步骤</h2>
+<ol>
+<li>检查数据</li>
+<li>开启正向和反向异常检测</li>
+<li>给模型的直接输出结果和最终loss加assert</li>
+<li>通过经验、猜测、反推等方法逐步把assert加到之前的步骤, 直到触发的assert帮你找到了不合法计算</li>
+<li>若计算loss的过程中没有发现问题, 且总是触发反向传播异常, 那可以考虑从理论上检查梯度爆炸和梯度消失</li>
+</ol>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Python 数值中的下划线是什么意思？</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/underscore-in-python-number.html"/>
+        <id>https://zzsblog.top/underscore-in-python-number.html</id>
+            <category term="Python"/>
+            <category term="Coding"/>
+
+        <updated>2022-07-31T20:43:44+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/5/download1-2" alt="assorted numbers" />
+                    直入主题，看一下矛盾所在： float(0_0) # 0.0 float(0_0_0_0_0_0_0) # 0.0 像我这种其他语言转来的、没有细致学习过的同学估计很难接受吧。 再看这样一个例子大概能明白过来： float(1_0) # 10.0&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/5/download1-2" alt="assorted numbers" />
+                <p>直入主题，看一下矛盾所在：</p>
+<pre><code class="language-{code-block}">float(0_0)  # 0.0
+float(0_0_0_0_0_0_0)  # 0.0
+</code></pre>
+<p>像我这种其他语言转来的、没有细致学习过的同学估计很难接受吧。</p>
+<p>再看这样一个例子大概能明白过来：</p>
+<pre><code class="language-{code-block}">float(1_0)  # 10.0
+float(12_000) # 12000.0
+</code></pre>
+<p>Python 数值中的下划线起辅助阅读作用，解析的时候和去掉下划线一样。</p>
+<blockquote>
+<p>This PEP proposes to extend Python’s syntax and number-from-string constructors so that underscores can be used as visual separators for digit grouping purposes in integral, floating-point and complex number literals.</p>
+</blockquote>
+<p><a href="https://peps.python.org/pep-0515/">PEP 515</a>, py36+.</p>
+
+            ]]>
+        </content>
+    </entry>
+</feed>
