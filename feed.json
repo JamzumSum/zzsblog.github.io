@@ -25,7 +25,7 @@
                    "C++"
             ],
             "date_published": "2022-07-31T19:48:12+08:00",
-            "date_modified": "2022-07-31T20:11:09+08:00"
+            "date_modified": "2022-08-01T20:17:29+08:00"
         },
         {
             "id": "https://zzsblog.top/async-re-sub.html",
@@ -43,7 +43,7 @@
                    "Coding"
             ],
             "date_published": "2022-07-31T16:06:38+08:00",
-            "date_modified": "2022-07-31T20:51:15+08:00"
+            "date_modified": "2022-08-01T20:21:36+08:00"
         },
         {
             "id": "https://zzsblog.top/ssh-reverse-proxy.html",
@@ -59,7 +59,7 @@
                    "Shell"
             ],
             "date_published": "2022-04-12T20:41:00+08:00",
-            "date_modified": "2022-07-31T20:49:24+08:00"
+            "date_modified": "2022-08-01T20:20:22+08:00"
         },
         {
             "id": "https://zzsblog.top/parsing-irregular-json.html",
@@ -77,7 +77,7 @@
                    "Coding"
             ],
             "date_published": "2022-03-22T20:04:00+08:00",
-            "date_modified": "2022-07-31T20:50:55+08:00"
+            "date_modified": "2022-08-01T20:21:20+08:00"
         },
         {
             "id": "https://zzsblog.top/tcaptcha.html",
@@ -95,7 +95,7 @@
                    "Coding"
             ],
             "date_published": "2021-08-18T20:50:00+08:00",
-            "date_modified": "2022-07-31T21:09:45+08:00"
+            "date_modified": "2022-08-01T20:22:38+08:00"
         },
         {
             "id": "https://zzsblog.top/pytorch-detect-nan.html",
@@ -113,7 +113,7 @@
                    "Coding"
             ],
             "date_published": "2021-08-07T20:33:00+08:00",
-            "date_modified": "2022-07-31T20:48:09+08:00"
+            "date_modified": "2022-08-01T20:23:08+08:00"
         },
         {
             "id": "https://zzsblog.top/underscore-in-python-number.html",
@@ -130,7 +130,7 @@
                    "Coding"
             ],
             "date_published": "2021-08-05T20:10:00+08:00",
-            "date_modified": "2022-07-31T20:43:44+08:00"
+            "date_modified": "2022-08-01T20:24:06+08:00"
         }
     ]
 }

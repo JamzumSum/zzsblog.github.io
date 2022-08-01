@@ -3,7 +3,7 @@
     <title>鸽园</title>
     <link href="https://zzsblog.top/feed.xml" rel="self" />
     <link href="https://zzsblog.top" />
-    <updated>2022-07-31T21:09:45+08:00</updated>
+    <updated>2022-08-01T20:24:06+08:00</updated>
     <author>
         <name>JamzumSum</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Coding"/>
             <category term="C++"/>
 
-        <updated>2022-07-31T20:11:09+08:00</updated>
+        <updated>2022-08-01T20:17:29+08:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://zzsblog.top/media/posts/3/download2" alt="white wooden block table" />
@@ -97,7 +97,7 @@ endif()
             <category term="Python"/>
             <category term="Coding"/>
 
-        <updated>2022-07-31T20:51:15+08:00</updated>
+        <updated>2022-08-01T20:21:36+08:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://zzsblog.top/media/posts/1/download1-2" alt="two white flying rockets during daytime" />
@@ -158,7 +158,7 @@ return &quot;&quot;.join(r)
         <id>https://zzsblog.top/ssh-reverse-proxy.html</id>
             <category term="Shell"/>
 
-        <updated>2022-07-31T20:49:24+08:00</updated>
+        <updated>2022-08-01T20:20:22+08:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://zzsblog.top/media/posts/7/download1" alt="person holding black camera lens" />
@@ -200,7 +200,7 @@ return &quot;&quot;.join(r)
             <category term="Python"/>
             <category term="Coding"/>
 
-        <updated>2022-07-31T20:50:55+08:00</updated>
+        <updated>2022-08-01T20:21:20+08:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://zzsblog.top/media/posts/4/download1" alt="brown brick pavement" />
@@ -371,7 +371,7 @@ class AstLoader:
             <category term="Python"/>
             <category term="Coding"/>
 
-        <updated>2022-07-31T21:09:45+08:00</updated>
+        <updated>2022-08-01T20:22:38+08:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://zzsblog.top/media/posts/8/download1" alt="white concrete building near green trees during daytime" />
@@ -481,7 +481,7 @@ class AstLoader:
             <category term="PyTorch"/>
             <category term="Coding"/>
 
-        <updated>2022-07-31T20:48:09+08:00</updated>
+        <updated>2022-08-01T20:23:08+08:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://zzsblog.top/media/posts/6/download1-3" alt="orange and black bug on green leaf" />
@@ -567,7 +567,7 @@ with torch.autograd.detect_anomaly():
             <category term="Python"/>
             <category term="Coding"/>
 
-        <updated>2022-07-31T20:43:44+08:00</updated>
+        <updated>2022-08-01T20:24:06+08:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://zzsblog.top/media/posts/5/download1-2" alt="assorted numbers" />
