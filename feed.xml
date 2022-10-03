@@ -3,12 +3,62 @@
     <title>鸽园</title>
     <link href="https://zzsblog.top/feed.xml" rel="self" />
     <link href="https://zzsblog.top" />
-    <updated>2022-08-26T15:38:03+08:00</updated>
+    <updated>2022-10-03T22:14:06+08:00</updated>
     <author>
         <name>JamzumSum</name>
     </author>
     <id>https://zzsblog.top</id>
 
+    <entry>
+        <title>为yacs配置开启类型检查和自动补全</title>
+        <author>
+            <name>JamzumSum</name>
+        </author>
+        <link href="https://zzsblog.top/enable-typing-for-yacs-config.html"/>
+        <id>https://zzsblog.top/enable-typing-for-yacs-config.html</id>
+            <category term="Python"/>
+            <category term="PyTorch"/>
+
+        <updated>2022-10-03T22:14:06+08:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://zzsblog.top/media/posts/10/download1" alt="爷又更新辣" />
+                    Motivation 作为从强类型语言入门的选手，我在写python的时候总是尽可能地做类型标注。我已经习惯于在任何时候获得类型提示（其实是自动补全），在IDE无能为力的那些无标注地带，我就好比是有强迫症的老年痴呆患者，不得不反复确认门锁了没。 我曾吐槽过 yacs。我说一个两年不更新的项目，怎么这么多深度学习的项目都在用。不更新其实无所谓，但一个2022年都不支持类型标注和自动补全的配置系统，它真的不落后吗？ 如果是我去写深度学习的东西，我是绝对不会选 yacs 做配置系统的。我做本科毕设的时候用的是 omegaconf，实话实说也差不多。现在要做的话，我应该更倾向于用 pydantic，不过应该是没有机会了。在低段位，深度学习的项目讲究的就是抄作业，抄作业就讲究一个原封不动（笑）。谁写了别人写过的谁就是二傻子，谁从头开始写谁就是大傻子（大笑）。这种情况下，也不难理解为什么一个20年的、功能平凡体验糟糕的库能流行到现在了。 上午用了一点小技巧解决我的强迫症和老年痴呆（雀实）。代码已开源并打包传到 PyPI，本文介绍并分享给同样有强迫症的大家 :D&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://zzsblog.top/media/posts/10/download1" alt="爷又更新辣" />
+                <h2 id="motivation">Motivation</h2>
+<p>作为从强类型语言入门的选手，我在写python的时候总是尽可能地做类型标注。我已经习惯于在任何时候获得类型提示（其实是自动补全），在IDE无能为力的那些无标注地带，我就好比是有强迫症的老年痴呆患者，不得不反复确认门锁了没。</p>
+<p>我曾吐槽过 <a href="https://github.com/rbgirshick/yacs" title="YACS -- Yet Another Configuration System">yacs</a>。我说一个两年不更新的项目，怎么这么多深度学习的项目都在用。不更新其实无所谓，但一个2022年都不支持类型标注和自动补全的配置系统，它真的不落后吗？</p>
+<p>如果是我去写深度学习的东西，我是绝对不会选 yacs 做配置系统的。我做本科毕设的时候用的是 omegaconf，实话实说也差不多。现在要做的话，我应该更倾向于用 <code>pydantic</code>，不过应该是没有机会了。在低段位，深度学习的项目讲究的就是抄作业，抄作业就讲究一个原封不动（笑）。谁写了别人写过的谁就是二傻子，谁从头开始写谁就是大傻子（大笑）。这种情况下，也不难理解为什么一个20年的、功能平凡体验糟糕的库能流行到现在了。</p>
+<p>上午用了一点小技巧解决我的强迫症和老年痴呆（雀实）。代码已开源并打包传到 PyPI，本文介绍并分享给同样有强迫症的大家 :D</p>
+<h2 id="思路">思路</h2>
+<p>yacs 的“嵌套节点-赋值”语法决定了它无法被 type-checker 解析。参考 pydantic，这种层级式的配置正常应该是按照“嵌套类-属性”的方式管理。于是就有了一套转换关系：配置节点变成类，配置项变成类的属性。由于 yacs 特有的默认值逻辑，我们可以从默认值求得属性的类型标注。</p>
+<pre><code class="language-py">_C.LOGDIR = &#39;results&#39;
+# 可以变成
+class RootClass:
+  LOGDIR: str    # type(&#39;results&#39;) is str
+_C: RootClass
+</code></pre>
+<p>于是我们可以遍历给定的配置，通过上述转换生成一个 stub file，放置在默认配置的旁边。因为 stub file 在类型解析中优先于原文件，于是IDE压根不考虑我们造了这么大的假，全盘接纳了我们生成的类型标注。</p>
+<p>此时若导入cfg，就能发现可以支持类型提示和自动补全了。但我们还有两件事没能做到：</p>
+<ol>
+<li>import RootClass</li>
+<li>isinstance(cfg, RootClass)</li>
+</ol>
+<p>因为 <code>RootClass</code> 是我们伪造的一个类，事实上配置文件里压根没有这么一个对象。导入会抛出导入错误，isinstance算符更是无稽之谈。但既然不存在，我们就加一个：</p>
+<pre><code class="language-py">RootClass = CfgNode    # 在原文件中增加一个类型别名就好了
+</code></pre>
+<p>此时终于达成和谐：解析器会正常导入<code>RootClass</code>，且它是<code>CfgNode</code>的别名。IDE或许也知道<code>RootClass</code>的真身是<code>CfgNode</code>，但它更尊重我们在 stub file 中的类型定义，从而为yacs的各个节点提供类型提示和自动补全。</p>
+<h2 id="后记">后记</h2>
+<p>其实写一写思路就足够了。这件事我原以为是要用 ast 分析、转换、导出才能解决，但实际上我是遍历<code>CfgNode</code>替代了 ast 分析，然后用 yaml 写的stub文件，压根没用上 ast。整个项目的核心代码很少，写完感觉各个部分都像是变魔术（</p>
+<p>最后放出<a href="https://github.com/JamzumSum/yacs-stubgen" title="Add typing support for your yacs config">仓库</a>，用法请参考 README。最近应该还会更新几次，之后就不必再更了（毕竟yacs都两年不更了我有什么可更的</p>
+
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>vscode中的MatLab环境</title>
         <author>
