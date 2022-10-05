@@ -3,7 +3,7 @@
     <title>鸽园</title>
     <link href="https://zzsblog.top/feed.xml" rel="self" />
     <link href="https://zzsblog.top" />
-    <updated>2022-10-03T22:14:06+08:00</updated>
+    <updated>2022-10-05T09:15:48+08:00</updated>
     <author>
         <name>JamzumSum</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Python"/>
             <category term="PyTorch"/>
 
-        <updated>2022-10-03T22:14:06+08:00</updated>
+        <updated>2022-10-05T09:15:48+08:00</updated>
             <summary>
                 <![CDATA[
                     Motivation 作为从强类型语言入门的选手，我在写python的时候总是尽可能地做类型标注。我已经习惯于在任何时候获得类型提示（其实是自动补全），在IDE无能为力的那些无标注地带，我就好比是有强迫症的老年痴呆患者，不得不反复确认门锁了没。 我曾吐槽过 yacs。我说一个两年不更新的项目，怎么这么多深度学习的项目都在用。不更新其实无所谓，但一个2022年都不支持类型标注和自动补全的配置系统，它真的不落后吗？ 如果是我去写深度学习的东西，我是绝对不会选 yacs 做配置系统的。我做本科毕设的时候用的是 omegaconf，实话实说也差不多。现在要做的话，我应该更倾向于用 pydantic，不过应该是没有机会了。在低段位，深度学习的项目讲究的就是抄作业，抄作业就讲究一个原封不动（笑）。谁写了别人写过的谁就是二傻子，谁从头开始写谁就是大傻子（大笑）。这种情况下，也不难理解为什么一个20年的、功能平凡体验糟糕的库能流行到现在了。 上午用了一点小技巧解决我的强迫症和老年痴呆（雀实）。代码已开源并打包传到 PyPI，本文介绍并分享给同样有强迫症的大家 :D&hellip;
@@ -53,6 +53,7 @@ _C: RootClass
 <h2 id="后记">后记</h2>
 <p>其实写一写思路就足够了。这件事我原以为是要用 ast 分析、转换、导出才能解决，但实际上我是遍历<code>CfgNode</code>替代了 ast 分析，然后用 yaml 写的stub文件，压根没用上 ast。整个项目的核心代码很少，写完感觉各个部分都像是变魔术（</p>
 <p>最后放出<a href="https://github.com/JamzumSum/yacs-stubgen" title="Add typing support for your yacs config">仓库</a>，用法请参考 README。最近应该还会更新几次，之后就不必再更了（毕竟yacs都两年不更了我有什么可更的</p>
+<p><a href="https://github.com/JamzumSum/yacs-stubgen" title="Add typing support for your yacs config"><figure class="post__image"><img decoding="async" loading="lazy" src="https://github.com/JamzumSum/yacs-stubgen/raw/dev/assets/screencap.gif" data-is-external-image="true"  alt="screencap" /></figure></a></p>
 
             ]]>
         </content>
