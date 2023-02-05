@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
     <title>鸽园</title>
     <link href="https://zzsblog.top/feed.xml" rel="self" />
     <link href="https://zzsblog.top" />
-    <updated>2022-10-05T09:15:48+08:00</updated>
+    <updated>2023-02-05T09:21:11+08:00</updated>
     <author>
         <name>JamzumSum</name>
     </author>
@@ -53,7 +53,7 @@ _C: RootClass
 <h2 id="后记">后记</h2>
 <p>其实写一写思路就足够了。这件事我原以为是要用 ast 分析、转换、导出才能解决，但实际上我是遍历<code>CfgNode</code>替代了 ast 分析，然后用 yaml 写的stub文件，压根没用上 ast。整个项目的核心代码很少，写完感觉各个部分都像是变魔术（</p>
 <p>最后放出<a href="https://github.com/JamzumSum/yacs-stubgen" title="Add typing support for your yacs config">仓库</a>，用法请参考 README。最近应该还会更新几次，之后就不必再更了（毕竟yacs都两年不更了我有什么可更的</p>
-<p><a href="https://github.com/JamzumSum/yacs-stubgen" title="Add typing support for your yacs config"><figure class="post__image"><img decoding="async" loading="lazy" src="https://github.com/JamzumSum/yacs-stubgen/raw/dev/assets/screencap.gif" data-is-external-image="true"  alt="screencap" /></figure></a></p>
+<p><a href="https://github.com/JamzumSum/yacs-stubgen" title="Add typing support for your yacs config"><figure class="post__image"><img decoding="async" loading="lazy" src="https://github.com/JamzumSum/yacs-stubgen/raw/dev/assets/screencap.gif" alt="screencap"  data-is-external-image="true"></figure></a></p>
 
             ]]>
         </content>
@@ -151,7 +151,7 @@ python setup.py install
             </summary>
         <content type="html">
             <![CDATA[
-                <p>写了一个下载必应美图的程序. 然而还没完, 我一直想改一下<figure class="post__image"><img decoding="async" loading="lazy" src="https://zzsblog.top/media/posts/3/example.png" sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://zzsblog.top/media/posts/3/responsive/example-xs.png 300w ,https://zzsblog.top/media/posts/3/responsive/example-sm.png 480w ,https://zzsblog.top/media/posts/3/responsive/example-md.png 768w ,https://zzsblog.top/media/posts/3/responsive/example-lg.png 1024w"  alt="这个东西" width="543" height="771" /></figure>…当时注意力就在这些什么”详细信息”啊, “属性”之类的上面, 搜啊搜啊, 也没找到什么办法…</p>
+                <p>写了一个下载必应美图的程序. 然而还没完, 我一直想改一下<figure class="post__image"><img decoding="async" loading="lazy" src="https://zzsblog.top/media/posts/3/example.png" alt="这个东西" width="543" height="771"  sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://zzsblog.top/media/posts/3/responsive/example-xs.png 300w ,https://zzsblog.top/media/posts/3/responsive/example-sm.png 480w ,https://zzsblog.top/media/posts/3/responsive/example-md.png 768w ,https://zzsblog.top/media/posts/3/responsive/example-lg.png 1024w"></figure>…当时注意力就在这些什么”详细信息”啊, “属性”之类的上面, 搜啊搜啊, 也没找到什么办法…</p>
 <p>今天早晨拿两个文件做对比试验, 于是发现修改了详细信息的文件(JPEG)会多出来一个”头部”, 一番搜索知道了这个叫<code>EXIF</code>头信息, 于是就有了下面这篇文章.</p>
 <h2 id="编译exiv2">编译<a href="https://www.exiv2.org/">Exiv2</a></h2>
 <blockquote>
@@ -496,7 +496,7 @@ class AstLoader:
         <content type="html">
             <![CDATA[
                 <h2 id="前言">前言</h2>
-<p>由于我最近在做<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>的验证码部分, 比如<figure class="post__image"><img decoding="async" loading="lazy" src="https://zzsblog.top/media/posts/8/tcapcha-screenshot.png" sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-xs.png 300w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-sm.png 480w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-md.png 768w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-lg.png 1024w"  alt="Image description" width="563" height="384" /></figure>, 在Qzone2TG的前面一些版本里, 我都是用selenium爬取图像配合模拟拖动来做的, 当然也需要一点点的cv技术.</p>
+<p>由于我最近在做<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>的验证码部分, 比如<figure class="post__image"><img decoding="async" loading="lazy" src="https://zzsblog.top/media/posts/8/tcapcha-screenshot.png" alt="Image description" width="563" height="384"  sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-xs.png 300w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-sm.png 480w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-md.png 768w ,https://zzsblog.top/media/posts/8/responsive/tcapcha-screenshot-lg.png 1024w"></figure>, 在Qzone2TG的前面一些版本里, 我都是用selenium爬取图像配合模拟拖动来做的, 当然也需要一点点的cv技术.</p>
 <p>但上面这种办法虽说理论可行, 但并非真的万无一失. 事实上, 在一开始开发的时候跑通之后, 这个办法就再也没好用过. 等到后来我用selenium抓二维码登录, 乃至<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>的第一个版本能够实现协议二维码登录的时候, 我就更不想用这种不可靠的办法了.</p>
 <p>直到<a href="https://github.com/JamzumSum/QQQR" title="a simulation of tencent login HTTP protocol">QQQR</a>的开发到了<code>2.3.0</code>, 我囿于一种执着重新开始研究验证码的破解之道, 在长达十余天乃至可想见的数十天中仔细研究抓包结果和TCaptcha相关的js代码, 我才终于意识到, 使用selenium这些模拟登录的办法究竟处在一种怎样危险的境地.</p>
 <p>截至目前, 我还没有搞定<code>23003 网络环境异常</code>的问题. 我相信唯一让我露馅的可能就在于验证码检测的时候. 尽管如此, 我仍然发现了很多tx检测浏览器特征的”小动作”.</p>
@@ -595,10 +595,10 @@ class AstLoader:
             <category term="PyTorch"/>
             <category term="Coding"/>
 
-        <updated>2022-08-01T20:23:08+08:00</updated>
+        <updated>2023-02-05T09:21:11+08:00</updated>
             <summary>
                 <![CDATA[
-                    有关内容在网上其实有一些比较系统的文章, 但灌水很多相对不太好找. 这里结合我自己的经验再总结一下. 注：本文讨论的是单精度训练。半精度训练会有更多的NaN成因，但不在本文讨论之列。 检查NaN有三板斧, 尽管调试NaN通常需要一定的经验和耐心, 但记住这三个至少不至于手足无措. torch.autograd.set_detect_anomaly(True) 如题, forward时出现NaN即时报错. 尽管说得好听, 但有的时候并不能准确地定位问题所在.
+                    有关内容在网上其实有一些比较系统的文章, 但灌水很多相对不太好找. 这里结合我自己的经验再总结一下. 注：本文讨论的是单精度训练。半精度训练会有更多的NaN成因，但不在本文讨论之列。 常见用法： # loss = model(X) with torch.autograd.detect_anomaly(): loss.backward()&hellip;
                 ]]>
             </summary>
         <content type="html">
@@ -607,63 +607,61 @@ class AstLoader:
 <p>有关内容在网上其实有一些比较系统的文章, 但灌水很多相对不太好找. 这里结合我自己的经验再总结一下.</p>
 </blockquote>
 <blockquote>
-<p>注：本文讨论的是<strong>单精度训练</strong>。半精度训练会有更多的NaN成因，但不在本文讨论之列。</p>
+<p>注：本文讨论的是<strong>单精度训练</strong>。半精度训练会有更多的<code>NaN</code>成因，但不在本文讨论之列。</p>
 </blockquote>
-<h2 id="三板斧">三板斧</h2>
-<p>检查NaN有三板斧, 尽管调试NaN通常需要一定的经验和耐心, 但记住这三个至少不至于手足无措.</p>
-<h3 id="1-正向传播异常侦测">#1 正向传播异常侦测</h3>
-<pre><code class="language-python">torch.autograd.set_detect_anomaly(True)
-</code></pre>
-<p>如题, forward时出现NaN即时报错. 尽管说得好听, 但有的时候并不能准确地定位问题所在. 属于调试NaN的必要辅助.</p>
-<h3 id="2-反向传播异常侦测">#2 反向传播异常侦测</h3>
+<h2 id="检查方法">检查方法</h2>
+<h3 id="detect_anomaly">detect_anomaly</h3>
+<p>常见用法：</p>
 <pre><code class="language-python"># loss = model(X)
 with torch.autograd.detect_anomaly():
     loss.backward()
 </code></pre>
-<p>如题, backward时出现NaN时即时报错. 相比#1来说更难确切定位问题, 往往用于兜底, 即确保出现NaN时程序会尽快抛出异常.</p>
-<h3 id="3-assert">#3 assert</h3>
-<p>我们已经知道，NaN是一种具有传染性的错误。<strong>NaN debugging的关键问题是定位第一个NaN出现的位置。</strong></p>
-<p>在pytorch中, 检查NaN的函数为<code>torch.isnan(T)</code>. 于是我们可以构造如下断言:</p>
+<p>文档：<a href="https://pytorch.org/docs/stable/autograd.html#torch.autograd.detect_anomaly">detect_anomaly</a></p>
+<p>在计算时出现<code>NaN</code>时即时报错. 其给出的错误位置可能不甚准确（尤其是反向传播才出现NaN时）, 但其错误信息往往会对你的调试工作有所启发。调试反向传播出现的<code>NaN</code>时，思考的重点应该放在调试信息中的<code>backward_fn</code>上。</p>
+<h3 id="assert">assert</h3>
+<p>我们已经知道，<code>NaN</code>是一种具有传染性的错误。**<code>NaN</code>调试的关键问题是定位第一个<code>NaN</code>出现的位置。**</p>
+<p>在 pytorch 中, 检查<code>NaN</code>的函数为<code>torch.isnan(T)</code>. 于是我们可以构造如下断言:</p>
 <pre><code class="language-python">assert not torch.any(torch.isnan(T))
 </code></pre>
-<blockquote>
-<p>当然, 这么写其实有一点性能浪费, 但写python, 又是debug专用代码, 何必考虑这么多呢¯\_(ツ)_/¯</p>
-</blockquote>
-<p>这是一个需要判断力的方法：将这个断言加在你认为有可能出现NaN的步骤之后. 你的判断可以帮助你少加断言、快速找到第一现场。
-不过没找到第一现场也不用担心，尽管这个现场已经漂移, 你也可以利用调试器的堆栈功能快速搜寻真正的事发现场.</p>
+<p>这是一个需要判断力的方法：将这个断言加在你认为有可能出现<code>NaN</code>的步骤之后. 你的判断可以帮助你少加断言、快速找到第一现场。</p>
+<p>不过没找到第一现场也不用担心，尽管这个现场已经漂移, 你也可以利用调试器的堆栈功能快速搜寻真正的事发现场.</p>
 <h2 id="nan的可能原因">NaN的可能原因</h2>
-<p>讲完三板斧总得讲讲NaN的成因, 要不然就是光有方法没有理论(x 尤其是#3, 要求调试者非常充分且熟练地掌握NaN的可能成因.</p>
+<p>讲完三板斧总得讲讲<code>NaN</code>的成因, 要不然就是光有方法没有理论(x 尤其是 <a href="assert">assert</a>, 要求调试者非常充分且熟练地掌握<code>NaN</code>的可能成因.</p>
 <h3 id="梯度爆炸">梯度爆炸</h3>
-<p>梯度爆炸, 或者梯度消失都可能导致NaN. 这个问题往往会被#2 反向传播异常检测捕获, 但真正定位到问题却难上加难. 相对来说, 重新推导一遍自己的理论模型、寻找可能导致梯度爆炸的计算显得更有针对性.</p>
+<p>梯度爆炸, 或者梯度消失都可能导致<code>NaN</code>. 这个问题往往会被<a href="detect_anomaly">detect_anomaly</a>捕获, 但真正定位到问题却难上加难. 相对来说, 重新推导一遍自己的理论模型、寻找可能导致梯度爆炸的计算显得更有针对性.</p>
 <h3 id="计算不合法">计算不合法</h3>
-<p>这也是NaN最常见的成因. 毕竟大多数的网络, 尤其是复现、组合别人的网络结构一般不会碰到梯度爆炸的问题, 而NaN大多出现于loss计算的部分, 诞生于某个小小的不合法计算, 然后污染它参与计算的所有结果, 最后在你的loss值上表现出来.</p>
+<p>这也是<code>NaN</code>最常见的成因. 毕竟大多数的网络, 尤其是复现、组合别人的网络结构一般不会碰到梯度爆炸的问题, 而<code>NaN</code>大多出现于 loss 计算的部分, 诞生于某个小小的不合法计算, 然后污染它参与计算的所有结果, 最后在你的 loss 值上表现出来.</p>
 <p>常见套路:</p>
 <ul>
-<li>$ log(x), x \leq 0 $</li>
+<li>$ \log x, x \leq 0 $</li>
 <li>$ c/0 $</li>
+<li>$ \sqrt 0 $, 正向传播正常，反向传播无法计算梯度</li>
 </ul>
+<blockquote>
+<p>$abs(0)$似乎在反向传播时不会产生<code>NaN</code></p>
+</blockquote>
 <blockquote>
 <p>尚有其他的一些情况我自己没遇到过, 网上可能会有补充</p>
 </blockquote>
-<p>这种问题运气好的话会被#1 正向异常检测直接找到, 但通常是找到一个漂移了亿点点的位置. 推荐用#3 assert的办法, 尤其是 <strong>自己写了loss时</strong>, 在关键位置放几个assert守门, 总归是没错的.</p>
-<p>注意, 绝大多数时候, inf也是不合常理的存在. 因此你可能也需要同时寻找inf:</p>
+<p>这种问题运气好的话会被<a href="detect_anomaly">detect_anomaly</a>直接找到, 但通常是找到一个漂移了亿点点的位置. 推荐用<a href="assert">assert</a>的办法, 尤其是 <strong>自己写了loss时</strong>, 在关键位置放几个<code>assert</code>守门, 总归是没错的.</p>
+<p>注意, 绝大多数时候, <code>inf</code>也是不合常理的存在. 因此你可能也需要同时寻找<code>inf</code>:</p>
 <pre><code class="language-python">assert not torch.any(torch.isnan(T) + torch.isinf(T))
 </code></pre>
 <h3 id="脏数据">脏数据</h3>
-<p>NaN的次常见成因. 顾名思义, 出现NaN仅仅是因为数据里含有NaN. 通常来说直接读图片不会出现NaN, 往往是大意地处理数据后会出现这种情况.</p>
+<p><code>NaN</code>的次常见成因. 顾名思义, 出现<code>NaN</code>仅仅是因为送进模型的数据里含有<code>NaN</code>. 通常来说直接读图片不会出现<code>NaN</code>, 往往是大意地处理数据后会出现这种情况.</p>
 <p>随便举个例子.</p>
 <pre><code class="language-python">mask = mask / mask.max()
 # serialize mask
 </code></pre>
-<p>这句话看起来没问题, 把uint8{0, 255}转成float32[0, 1]. 相信很多人都这么写过. 正常来说不会有任何问题, 直到我遇到了一张纯黑的mask :P</p>
-<p>毕竟谁也不会想到有一张图没标注还给放数据集里了是吧. 但不管怎么说, 此时我们犯了”除零”的错误. 这个mask会变成携带NaN的脏数据输入模型, 并在计算loss时将loss结果污染. 如果程序没有及时终止, 在仅仅一次反向传播之后, 你的模型参数将变为NaN, 其一切推导将得出NaN ¯\_(ツ)_/¯</p>
+<p>这句话看起来没问题, 把 mask 的值域缩放到<code>float32[0, 1]</code>. 在遇到一张纯黑（max=0）的 mask 之前，很难注意到这里存在这样的隐患 :(</p>
+<p>毕竟我们总是假设，标注的 mask 至少是有一个非零值的。但不管怎么说, 此时我们犯了”除零”的错误. 这个 mask 会变成携带<code>NaN</code>的脏数据输入模型, 并在计算 loss 时将 loss 结果污染. 如果程序没有及时终止, 在仅仅一次反向传播之后, 你的模型参数将变为<code>NaN</code>, 其一切推导也将得出<code>NaN</code>。</p>
 <h2 id="检查nan的一般步骤">检查NaN的一般步骤</h2>
 <ol>
-<li>检查数据</li>
-<li>开启正向和反向异常检测</li>
-<li>给模型的直接输出结果和最终loss加assert</li>
-<li>通过经验、猜测、反推等方法逐步把assert加到之前的步骤, 直到触发的assert帮你找到了不合法计算</li>
-<li>若计算loss的过程中没有发现问题, 且总是触发反向传播异常, 那可以考虑从理论上检查梯度爆炸和梯度消失</li>
+<li>（静态地）检查非法计算 &amp; 检查数据</li>
+<li>开启异常检测</li>
+<li>给模型的直接输出结果和最终 loss 加<code>assert</code></li>
+<li>通过经验、猜测、反推等方法逐步把<code>assert</code>加到之前的步骤, 直到触发的<code>assert</code>帮你找到了不合法计算</li>
+<li>若计算 loss 的过程中没有发现问题, 且总是触发反向传播异常, 那可以考虑从理论上检查梯度爆炸和梯度消失</li>
 </ol>
 
             ]]>
