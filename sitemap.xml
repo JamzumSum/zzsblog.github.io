@@ -12,7 +12,7 @@
 <loc>https://zzsblog.top/async-re-sub.html</loc>
 <lastmod>2022-08-01T20:21:36+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\1/download1-2</image:loc>
+<image:loc>https://zzsblog.top/media/posts/1/download1-2</image:loc>
 <image:title><![CDATA[two white flying rockets during daytime]]></image:title>
 </image:image>
 </url>
@@ -23,15 +23,19 @@
 <loc>https://zzsblog.top/edit-exif-header.html</loc>
 <lastmod>2022-08-01T20:17:29+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\3/download2</image:loc>
+<image:loc>https://zzsblog.top/media/posts/3/download2</image:loc>
 <image:title><![CDATA[white wooden block table]]></image:title>
+</image:image>
+<image:image>
+<image:loc>https://zzsblog.top/media/posts/3/example.png</image:loc>
+<image:title><![CDATA[这个东西]]></image:title>
 </image:image>
 </url>
 <url>
 <loc>https://zzsblog.top/enable-typing-for-yacs-config.html</loc>
 <lastmod>2022-10-05T09:15:48+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\10/download1</image:loc>
+<image:loc>https://zzsblog.top/media/posts/10/download1</image:loc>
 <image:title><![CDATA[爷又更新辣]]></image:title>
 </image:image>
 </url>
@@ -42,7 +46,7 @@
 <loc>https://zzsblog.top/parsing-irregular-json.html</loc>
 <lastmod>2022-08-01T20:21:20+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\4/download1</image:loc>
+<image:loc>https://zzsblog.top/media/posts/4/download1</image:loc>
 <image:title><![CDATA[brown brick pavement]]></image:title>
 </image:image>
 </url>
@@ -50,7 +54,7 @@
 <loc>https://zzsblog.top/pytorch-detect-nan.html</loc>
 <lastmod>2023-02-05T09:21:11+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\6/download1-3</image:loc>
+<image:loc>https://zzsblog.top/media/posts/6/download1-3</image:loc>
 <image:title><![CDATA[orange and black bug on green leaf]]></image:title>
 </image:image>
 </url>
@@ -58,7 +62,7 @@
 <loc>https://zzsblog.top/run-matlab-in-vscode-jupyter.html</loc>
 <lastmod>2022-08-26T15:38:03+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\9/download1</image:loc>
+<image:loc>https://zzsblog.top/media/posts/9/download1</image:loc>
 <image:title><![CDATA[]]></image:title>
 </image:image>
 </url>
@@ -66,7 +70,7 @@
 <loc>https://zzsblog.top/ssh-reverse-proxy.html</loc>
 <lastmod>2022-08-01T20:20:22+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\7/download1</image:loc>
+<image:loc>https://zzsblog.top/media/posts/7/download1</image:loc>
 <image:title><![CDATA[person holding black camera lens]]></image:title>
 </image:image>
 </url>
@@ -74,15 +78,19 @@
 <loc>https://zzsblog.top/tcaptcha.html</loc>
 <lastmod>2022-08-01T20:22:38+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\8/download1</image:loc>
+<image:loc>https://zzsblog.top/media/posts/8/download1</image:loc>
 <image:title><![CDATA[white concrete building near green trees during daytime]]></image:title>
+</image:image>
+<image:image>
+<image:loc>https://zzsblog.top/media/posts/8/tcapcha-screenshot.png</image:loc>
+<image:title><![CDATA[Image description]]></image:title>
 </image:image>
 </url>
 <url>
 <loc>https://zzsblog.top/underscore-in-python-number.html</loc>
 <lastmod>2022-08-01T20:24:06+08:00</lastmod>
 <image:image>
-<image:loc>https://zzsblog.top/media\posts\5/download1-2</image:loc>
+<image:loc>https://zzsblog.top/media/posts/5/download1-2</image:loc>
 <image:title><![CDATA[assorted numbers]]></image:title>
 </image:image>
 </url>
